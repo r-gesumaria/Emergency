@@ -1,3 +1,45 @@
 <resources>
     <string name="app_name">Emergency</string>
+
+    <string name="datiPersonali">Dati personali</string>
+    <string name="nome">Nome*</string>
+    <string name="nomeH">Nome</string>
+    <string name="cognome">Cognome*</string>
+    <string name="cognomeH">Cognome</string>
+    <string name="cf">Codoce fiscale*</string>
+    <string name="cfH">Codoce fiscale</string>
+    <string name="comuneNascita">Comune di nascita</string>
+    <string name="comuneNascitaH">Comune di nascita</string>
+    <string name="dataNascita">Data di nascita</string>
+    <string name="dataNascitaH">Data di nascita</string>
+    <string name="cap">CAP</string>
+    <string name="capH">CAP</string>
+    <string name="indirizzo">Indirizzo</string>
+    <string name="indirizzoH">Indirizzo</string>
+    <string name="numeroTel">Numero di telefono</string>
+    <string name="numeroTelH">Numero di telefono</string>
+    <string name="email">E-mail</string>
+    <string name="emailH">E-mail</string>
+
+    <string name="crednziali">Credenziali di accesso</string>
+    <string name="username">Username*</string>
+    <string name="usernameH">Username</string>
+    <string name="psw">Password*</string>
+    <string name="pswH">Password</string>
+    <string name="confPsw">Conferma password*</string>
+    <string name="confPswH">Conferma password</string>
+
+    <string name="login">Accedi</string>
+    <string name="registrazione">Registrati</string>
+
+    <string name="aiutoSegnalazione">Segnala la emergenza!</string>
+    <string name="tipoSegnalazione">Tipo di emergenza</string>
+    <string name="indirizzoSegnalazione">Indica lo indirizzo della emergenza*</string>
+    <string name="mediaSegnalazione">Aggiungi media</string>
+    <string name="descrizioneSegnalazione">Descrizione</string>
+    <string name="descrizioneEmergenza">Aggiungi una descrizione della emergenza</string>
+    <string name="incendio">Incendio</string>
+    <string name="gas">Perdita di gas</string>
+    <string name="frana">Frana</string>
+    <string name="altro">Altro</string>
 </resources>
