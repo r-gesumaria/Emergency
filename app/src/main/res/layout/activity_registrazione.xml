@@ -30,8 +30,13 @@
             android:layout_height="wrap_content"
             android:text="@string/datiPersonali"
             android:textSize="@dimen/titoli"
-            android:layout_marginBottom="10dp"
             android:textStyle="bold"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/color_button"
+            android:layout_height="2dip"
+            android:layout_marginBottom="10dp"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -66,11 +71,12 @@
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/CfUetente"
+                android:id="@+id/cfUetente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/cfH"
                 android:maxLines="1"
+                android:maxLength="16"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
@@ -80,7 +86,7 @@
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/DataUetente"
+                android:id="@+id/dataUetente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/dataNascitaH"
@@ -94,7 +100,7 @@
             android:layout_height="wrap_content">
 
             <AutoCompleteTextView
-                android:id="@+id/ComuneUetente"
+                android:id="@+id/comuneUetente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/comuneNascitaH"
@@ -126,6 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/capH"
+                android:inputType="number"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -141,6 +148,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/numeroTelH"
                 android:maxLines="1"
+                android:inputType="number"
+                android:maxLength="10"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
@@ -154,6 +163,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/emailH"
+                android:inputType="textEmailAddress"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -164,9 +174,13 @@
             android:layout_height="wrap_content"
             android:text="@string/crednziali"
             android:textSize="@dimen/titoli"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:textStyle="bold"/>
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/color_button"
+            android:layout_height="2dip"
+            android:layout_marginBottom="10dp"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -191,6 +205,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/pswH"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
 
@@ -205,10 +220,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/confPswH"
+                android:inputType="textPassword"
                 android:maxLines="1"
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/btConfReg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Conferma"/>
 
     </LinearLayout>
 

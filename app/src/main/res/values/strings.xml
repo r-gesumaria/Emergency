@@ -2,32 +2,20 @@
     <string name="app_name">Emergency</string>
 
     <string name="datiPersonali">Dati personali</string>
-    <string name="nome">Nome*</string>
-    <string name="nomeH">Nome</string>
-    <string name="cognome">Cognome*</string>
-    <string name="cognomeH">Cognome</string>
-    <string name="cf">Codoce fiscale*</string>
-    <string name="cfH">Codoce fiscale</string>
-    <string name="comuneNascita">Comune di nascita</string>
+    <string name="nomeH">Nome*</string>
+    <string name="cognomeH">Cognome*</string>
+    <string name="cfH">Codoce fiscale*</string>
     <string name="comuneNascitaH">Comune di nascita</string>
-    <string name="dataNascita">Data di nascita</string>
     <string name="dataNascitaH">Data di nascita</string>
-    <string name="cap">CAP</string>
     <string name="capH">CAP</string>
-    <string name="indirizzo">Indirizzo</string>
     <string name="indirizzoH">Indirizzo</string>
-    <string name="numeroTel">Numero di telefono</string>
-    <string name="numeroTelH">Numero di telefono</string>
-    <string name="email">E-mail</string>
+    <string name="numeroTelH">Numero di telefono*</string>
     <string name="emailH">E-mail</string>
 
     <string name="crednziali">Credenziali di accesso</string>
-    <string name="username">Username*</string>
-    <string name="usernameH">Username</string>
-    <string name="psw">Password*</string>
-    <string name="pswH">Password</string>
-    <string name="confPsw">Conferma password*</string>
-    <string name="confPswH">Conferma password</string>
+    <string name="usernameH">Username*</string>
+    <string name="pswH">Password*</string>
+    <string name="confPswH">Conferma password*</string>
 
     <string name="login">Accedi</string>
     <string name="registrazione">Registrati</string>
