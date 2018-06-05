@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="5.5">
 
     <ImageView
+        android:id="@+id/crea"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -12,6 +15,18 @@
         android:paddingBottom="20dp"
         android:src="@drawable/fireman"
         android:layout_weight="2"/>
+
+
+    <TextView
+        android:id="@+id/txtErrore"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/colorPrimaryDark"
+        android:drawableLeft="@drawable/alt"
+        android:text="@string/erroreCredenziali"
+        android:visibility="invisible"/>
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"

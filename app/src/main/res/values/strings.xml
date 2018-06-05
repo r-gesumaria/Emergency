@@ -4,7 +4,7 @@
     <string name="datiPersonali">Dati personali</string>
     <string name="nomeH">Nome*</string>
     <string name="cognomeH">Cognome*</string>
-    <string name="cfH">Codoce fiscale*</string>
+    <string name="cfH">Codice fiscale*</string>
     <string name="comuneNascitaH">Comune di nascita</string>
     <string name="dataNascitaH">Data di nascita</string>
     <string name="capH">CAP</string>
@@ -31,4 +31,6 @@
     <string name="frana">Frana</string>
     <string name="altro">Altro</string>
     <string name="neve">Allerta neve</string>
+
+    <string name="erroreCredenziali">   Username o password errata. Riprovare.</string>
 </resources>
