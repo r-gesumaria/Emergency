@@ -7,10 +7,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,30 +34,37 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Roberta on 01/06/2018.
  */
 public class Segnalazione extends AppCompatActivity {
 
-    static final int REQUEST_IMAGE_CAPTURE = 1 ;
+    static final int REQUEST_GALLERY = 0;
     private LinearLayout contAnteprime;
+    private EditText editLocation;
     private ImageButton btCamera, btPosizione;
     private String mCurrentPhotoPath;
-    static final int REQUEST_TAKE_PHOTO = 1;
+    static final int REQUEST_CAMERA = 1;
     static final int ID_RICHIESTA_PERMISSION = 1;
-    static final int ACTION_REQUEST_GALLERY = 1;
-    static final int ACTION_REQUEST_CAMERA = 2;
+    private LocationManager locationManager;
 
 
     @Override
@@ -58,16 +75,21 @@ public class Segnalazione extends AppCompatActivity {
         btCamera = (ImageButton) findViewById(R.id.btCamera);
         btPosizione = (ImageButton) findViewById(R.id.btPosizione);
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
+        editLocation = (EditText) findViewById(R.id.editLocation);
+
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         //permesssi
         int statoPermissionWrite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int statoPermissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        int statoPermissionRead = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (statoPermissionWrite == PackageManager.PERMISSION_DENIED || statoPermissionCamera == PackageManager.PERMISSION_DENIED
-                || statoPermissionRead == PackageManager.PERMISSION_DENIED) {
+        int statoPermissionPos = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        //int statoPermissionRead = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (statoPermissionWrite == PackageManager.PERMISSION_DENIED || statoPermissionCamera == PackageManager.PERMISSION_DENIED || statoPermissionPos == PackageManager.PERMISSION_DENIED) {
+            //|| statoPermissionRead == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ID_RICHIESTA_PERMISSION);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
         }
 
         btCamera.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +97,7 @@ public class Segnalazione extends AppCompatActivity {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
                 builder.setTitle("Choose Image Source");
-                builder.setItems(new CharSequence[] {"Gallery", "Camera"},
+                builder.setItems(new CharSequence[]{"Gallery", "Camera"},
                         new DialogInterface.OnClickListener() {
 
                             @Override
@@ -87,35 +109,17 @@ public class Segnalazione extends AppCompatActivity {
                                         intent.setType("image/*");
 
                                         Intent chooser = Intent.createChooser(intent, "Choose a Picture");
-                                        startActivityForResult(chooser, REQUEST_IMAGE_CAPTURE);
-
+                                        chooser.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                        startActivityForResult(chooser, REQUEST_GALLERY);
                                         break;
 
                                     case 1:
-                                        Intent getCameraImage = new Intent("android.media.action.IMAGE_CAPTURE");
-
-                                        File cameraFolder;
-
-                                        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))cameraFolder = new File(android.os.Environment.getExternalStorageDirectory(),"Emergency/");
-                                        else
-                                            cameraFolder= Segnalazione.this.getCacheDir();
-                                        if(!cameraFolder.exists())
-                                            cameraFolder.mkdirs();
-
-                                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd'T'HHmmss");
-                                        String timeStamp = dateFormat.format(new Date());
-                                        String imageFileName = "picture_" + timeStamp + ".jpg";
-
-                                        File photo = new File(Environment.getExternalStorageDirectory(),
-                                                "Emergency/" + imageFileName);
-                                        Uri initialURI = Uri.fromFile(photo);
-                                        Log.d("MIO","uri " + initialURI);
-                                        getCameraImage.putExtra(MediaStore.EXTRA_OUTPUT, initialURI);
-                                        getCameraImage.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                                        //Uri initialURI = Uri.fromFile(photo);
-
-                                        startActivityForResult(getCameraImage, REQUEST_IMAGE_CAPTURE);
-
+                                        dispatchTakePictureIntent();
+                                        //galleryAddPic();
+                                        /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                                            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                                        }*/
                                         break;
 
                                     default:
@@ -125,25 +129,11 @@ public class Segnalazione extends AppCompatActivity {
                         });
 
                 builder.show();
-               /* Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-                try {
-                    createImageFile();
-                    galleryAddPic();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-                //dispatchTakePictureIntent();
 
             }
-                /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
-            }*/
         });
+
+        ottieniPosizoine();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -153,74 +143,102 @@ public class Segnalazione extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-
     }
 
-    //visualizzazione anteprima foto scattata
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            if (requestCode == REQUEST_IMAGE_CAPTURE  && resultCode == RESULT_OK) {
-                Log.d("MIO","entro per l'anteprima");
-                Bundle extras = data.getExtras();
-                Bitmap imageBitmap = (Bitmap) extras.get("data");
-                ImageView mImageView = new ImageView(getApplicationContext());
-                mImageView.setImageBitmap(imageBitmap);
-                contAnteprime.addView(mImageView);
-                Log.d("MIO","entro");
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == this.RESULT_CANCELED) {
+            return;
+        }
+        if (requestCode == REQUEST_GALLERY) {
+            if (data != null) {
+                Uri contentURI = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
+                    //String path = saveImage(bitmap);
+                    //Toast.makeText(Segnalazione.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    ImageView imageView = new ImageView(getApplicationContext());
+                    FrameLayout frameLayout = new FrameLayout(getApplicationContext());
 
-                //saveToInternalStorage(imageBitmap);
+                    LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(30, 30);
+                    frameLayout.setLayoutParams(layoutParams1);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
+                    imageView.setLayoutParams(layoutParams);
+
+                    imageView.setImageBitmap(bitmap);
+                    contAnteprime.addView(imageView);
+                    contAnteprime.addView(frameLayout);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(Segnalazione.this, "Failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        } else if (requestCode == REQUEST_CAMERA) {
+            Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
+            saveImage(thumbnail);
+
+            ImageView imageView = new ImageView(getApplicationContext());
+            FrameLayout frameLayout = new FrameLayout(getApplicationContext());
+
+            LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(30, 30);
+            frameLayout.setLayoutParams(layoutParams1);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
+            imageView.setLayoutParams(layoutParams);
+
+            imageView.setImageBitmap(thumbnail);
+            contAnteprime.addView(imageView);
+            contAnteprime.addView(frameLayout);
         }
     }
 
-    private String saveToInternalStorage(Bitmap bitmapImage){
-        Context cw = getApplicationContext();
-        // path to /data/data/yourapp/app_data/imageDir
-        //File directory = cw.getDir("imageDir", Context.);
-        //File directory = getExternalFilesDir(Environment.DIRECTORY_DCIM);
-        File root = Environment.getExternalStorageDirectory();
-        File directory = new File(root.getAbsolutePath()+"/DCIM/Emergency");
-        Log.d("MIO","salvataggio --- " + root.getAbsolutePath());
-        Log.d("MIO","salvataggio dir" + directory.getPath());
-        // Create imageDir
-        directory.mkdir();
-        File mypath=new File(directory,"profile0.jpg");
-        Log.d("MIO","salvataggio mypath" + mypath.getPath());
-        FileOutputStream fos = null;
-        Log.d("MIO","fos1 "+fos);
+    public String saveImage(Bitmap myBitmap) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
+        File wallpaperDirectory = new File(Environment.getExternalStorageDirectory() + "/DCIM/Emrgency");
+        // have the object build the directory structure, if needed.
+        if (!wallpaperDirectory.exists()) {
+            wallpaperDirectory.mkdirs();
+        }
         try {
-            fos = new FileOutputStream(mypath);
-            Log.d("MIO","fos "+fos);
-            // Use the compress method on the BitMap object to write image to the OutputStream
+            File f = new File(wallpaperDirectory, Calendar.getInstance().getTimeInMillis() + ".jpg");
+            f.createNewFile();
+            FileOutputStream fo = new FileOutputStream(f);
+            fo.write(bytes.toByteArray());
+            MediaScannerConnection.scanFile(this,new String[]{f.getPath()},new String[]{"image/jpeg"}, null);
+            fo.close();
+            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
 
-            bitmapImage.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } /*finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/
-        return directory.getAbsolutePath();
+            return f.getAbsolutePath();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return "";
     }
 
     private File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File root = Environment.getExternalStorageDirectory();
+        //File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+        //Log.d("FOTO","root "+ root);
+        File directory = new File(root.getAbsolutePath()+"/DCIM/Emergency1");
 
+        directory.mkdir();
+        Log.d("FOTO","dir "+directory);
         File image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
-                storageDir      /* directory */
+                directory      /* directory */
         );
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d("MIO","directory -- "+mCurrentPhotoPath.toString());
+        Log.d("FOTO"," mCurrentPhotoPath "+ mCurrentPhotoPath);
         return image;
     }
 
@@ -238,23 +256,14 @@ public class Segnalazione extends AppCompatActivity {
             }
             // Continue only if the File was successfully created
             if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this,"com.example.android.fileprovider",photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                Uri photoURI = FileProvider.getUriForFile(this, "com.helpfire.emergency.fileprovider", photoFile);
+                Log.d("FOTO","uri "+ photoURI);
+                takePictureIntent.putExtra("uri", photoURI);
+                takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                startActivityForResult(takePictureIntent, REQUEST_CAMERA);
             }
         }
     }
-
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -276,7 +285,91 @@ public class Segnalazione extends AppCompatActivity {
         }else if( id == R.id.action_help){
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
+
+    //classe per le coordinate
+    private class MyLocationListener implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.d("MIO","onLocationChanged");
+            String longitudine = String.valueOf(location.getLongitude());
+            String latitudine = String.valueOf(location.getLatitude());
+            Log.d("MIO","lat "+latitudine +"--long "+longitudine);
+
+                 /*----------to get City-Name from coordinates -------------*/
+            String cityName=null;
+            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+            List<Address> addresses;
+            try {
+                addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                if (addresses.size() > 0)
+                    Log.d("MIO","località "+addresses.get(0).getLocality());
+                Log.d("MIO","country name "+addresses.get(0).getCountryName());
+                Log.d("MIO","country code "+addresses.get(0).getCountryCode());
+                Log.d("MIO","postal code "+addresses.get(0).getPostalCode());
+                Log.d("MIO","admin area "+addresses.get(0).getAdminArea());
+                Log.d("MIO","sublocality "+addresses.get(0).getAddressLine(0));
+                cityName=addresses.get(0).getAddressLine(0);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            editLocation.setText(cityName);
+
+
+
+        }
+
+        @Override
+        public void onStatusChanged(String s, int i, Bundle bundle) {
+            Log.d("MIO","onStatusChanged");
+        }
+
+        @Override
+        public void onProviderEnabled(String s) {
+            Log.d("MIO","onProviderEnabled");
+        }
+
+        @Override
+        public void onProviderDisabled(String s) {
+            Log.d("MIO","onProviderDisabled");
+            Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(i);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode){
+            case 10:
+                Log.d("MIO","onRequestPermissionsResult");
+                ottieniPosizoine();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void ottieniPosizoine() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Log.d("MIO","permessi");
+                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
+                        ,10);
+            }
+            return;
+        }
+
+        btPosizione.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d("MIO","clicco");
+                //noinspection MissingPermission
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, new MyLocationListener());
+            }
+        });
+    }
+
+
 }

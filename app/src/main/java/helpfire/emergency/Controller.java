@@ -3,6 +3,8 @@ package helpfire.emergency;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
+
 import org.json.JSONObject;
 
 import java.io.File;
@@ -77,12 +79,7 @@ public class  Controller {
             fis = new FileInputStream(lista);
             ObjectInputStream reader = new ObjectInputStream(fis);
 
-            //JSONObject json = (JSONObject) reader.readObject();
-            Utenza o = (Utenza) reader.readObject();
-            Log.d("FILE","oggetto "+o.toString());
-
-            listaUtenti = o.getListaUtenti();
-            Log.d("FILE","lista--- "+listaUtenti);
+            listaUtenti = (ArrayList) reader.readObject();
             return  listaUtenti;
         }else
             return null;

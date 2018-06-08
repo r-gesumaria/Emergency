@@ -6,7 +6,7 @@
     <string name="cognomeH">Cognome*</string>
     <string name="cfH">Codice fiscale*</string>
     <string name="comuneNascitaH">Comune di nascita</string>
-    <string name="dataNascitaH">Data di nascita</string>
+    <string name="dataNascitaH">Data di nascita (DD/MM/YYYY)</string>
     <string name="capH">CAP</string>
     <string name="indirizzoH">Indirizzo</string>
     <string name="numeroTelH">Numero di telefono*</string>

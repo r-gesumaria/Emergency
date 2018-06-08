@@ -27,13 +27,11 @@ import java.util.ArrayList;
  */
 public class Login extends AppCompatActivity {
 
+    private static final int ID_RICHIESTA_PERMISSION= 0;
     private TextView btRegistrati,txtErrore;
     private Button btAccedi;
     private AutoCompleteTextView userLogin, pswLogin;
-    private ImageView crea;
     private ArrayList<Utente> lista;
-    private int ID_RICHIESTA_PERMISSION= 0;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,38 +39,26 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.login);
 
         try {
-            boolean c = Controller.creaFile(getApplicationContext());
-            Log.d("FILE","prima creazione utenza"+c);
+            Controller.creaFile(getApplicationContext());
         } catch (IOException e) {
             Toast.makeText(Login.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-            Log.d("FILE", "file --- " + e.getMessage());
             e.printStackTrace();
         }
 
         lista = new ArrayList<>();
+
         btRegistrati = (TextView) findViewById(R.id.registrazioneUtente);
         txtErrore = (TextView) findViewById(R.id.txtErrore);
         btAccedi = (Button) findViewById(R.id.btAccedi);
         userLogin = (AutoCompleteTextView) findViewById(R.id.userLogin);
         pswLogin = (AutoCompleteTextView) findViewById(R.id.pswLogin);
 
-        //permesssi
-        int statoPermissionWrite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int statoPermissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        int statoPermissionPos = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        //int statoPermissionRead = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (statoPermissionWrite == PackageManager.PERMISSION_DENIED || statoPermissionCamera == PackageManager.PERMISSION_DENIED || statoPermissionPos == PackageManager.PERMISSION_DENIED){
-            //|| statoPermissionRead == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ID_RICHIESTA_PERMISSION);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
-            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
-        }
+        richiediPermessi();
+        clearEdit();
 
         btRegistrati.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(Login.this, "reg", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(Login.this, Registrazione.class));
 
             }
@@ -94,16 +80,15 @@ public class Login extends AppCompatActivity {
                 }else {
                     boolean contr = false;
                     try {
-
                         lista = Controller.letturaFile();
 
                         if(lista != null){
-
                             Log.d("FILE", "lista in login " + lista);
                             for (int i = 0; i < lista.size(); i++) {
                                 if (lista.get(i).getUsername().equalsIgnoreCase(user) && lista.get(i).getPassword().equalsIgnoreCase(psw)) {
                                     contr = true;
-                                    startActivity(new Intent(Login.this, SegnalazioneEmy.class));
+                                    startActivity(new Intent(Login.this, Segnalazione.class));
+
                                 }
                             }
 
@@ -159,5 +144,28 @@ public class Login extends AppCompatActivity {
                 }// fine else
             }
         });
+    }
+
+    /**
+     * Richiesta dei permessi
+     */
+    private void richiediPermessi(){
+        int statoPermissionWrite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int statoPermissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+        int statoPermissionPos = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int statoPermissionLoc = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        if (statoPermissionWrite == PackageManager.PERMISSION_DENIED || statoPermissionCamera == PackageManager.PERMISSION_DENIED ||
+                statoPermissionPos == PackageManager.PERMISSION_DENIED || statoPermissionLoc == PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ID_RICHIESTA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
+        }
+    }
+
+    private void clearEdit(){
+        pswLogin.setText("");
+        userLogin.setText("");
     }
 }
