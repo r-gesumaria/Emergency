@@ -6,7 +6,7 @@
         android:id="@+id/action_saveFile"
         android:orderInCategory="100"
         android:title="salvaReg"
-        android:icon="@android:drawable/ic_menu_send"
+        android:icon="@android:drawable/ic_menu_save"
         app:showAsAction="ifRoom" />
 
 </menu>

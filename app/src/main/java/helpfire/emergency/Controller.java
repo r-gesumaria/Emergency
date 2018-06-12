@@ -38,7 +38,6 @@ public class  Controller {
             utenza.riempi();
             oos.writeObject(utenza);
             oos.close();
-
             return true;
         }else
             return false;
@@ -52,9 +51,10 @@ public class  Controller {
             if(!ut.contains(u)) {
                 Log.d("FILE","inserimento - inserisco");
                 ut.add(u);
+                Utenza utenza = new Utenza(ut);
                 FileOutputStream fos = new FileOutputStream(lista);
                 oos = new ObjectOutputStream(fos);
-                oos.writeObject(ut);
+                oos.writeObject(utenza);
                 oos.close();
                 return true;
             }else
@@ -78,11 +78,24 @@ public class  Controller {
 
             fis = new FileInputStream(lista);
             ObjectInputStream reader = new ObjectInputStream(fis);
-
-            listaUtenti = (ArrayList) reader.readObject();
+            Utenza ut = (Utenza) reader.readObject();
+            listaUtenti = ut.getListaUtenti();
+            //listaUtenti = (ArrayList) reader.readObject();
             return  listaUtenti;
         }else
             return null;
+    }
+
+    public static boolean rimuoviUtente(Utente u) throws IOException, ClassNotFoundException {
+        ArrayList<Utente> ut = new ArrayList<>();
+        if(lista.exists()) {
+            ut = letturaFile();
+            if(ut.contains(u)) {
+                ut.remove(u);
+                return true;
+            }
+        }
+        return false;
     }
 }
 

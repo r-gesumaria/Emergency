@@ -13,6 +13,10 @@ public class Utenza implements Serializable{
         this.listaUtenti = new ArrayList<>();
     }
 
+    public Utenza(ArrayList<Utente> lista){
+        this.listaUtenti = lista;
+    }
+
     //per la simulazione
     public void riempi(){
         listaUtenti.add(new Utente("Luigi", "Biaggi", "LGBGG12H3ER44735", "12/03/1990", "Salerno", "via Roma,46,SA", "84121", "33456547890", "lBiaggi@gmail.com", "luigiviaggi", "123"));

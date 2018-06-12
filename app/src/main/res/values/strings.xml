@@ -20,17 +20,22 @@
     <string name="login">Accedi</string>
     <string name="registrazione">Registrati</string>
 
-    <string name="aiutoSegnalazione">Segnala la emergenza!</string>
-    <string name="tipoSegnalazione">Tipo di emergenza</string>
-    <string name="indirizzoSegnalazione">Indica lo indirizzo della emergenza*</string>
+    <string name="aiutoSegnalazione">Segnala l\'emergenza!</string>
+    <string name="tipoSegnalazione">Tipo di emergenza*</string>
+    <string name="indirizzoSegnalazione">Indica l\'indirizzo dell\'emergenza*</string>
     <string name="mediaSegnalazione">Aggiungi media</string>
+    <string name="infoMedia">INFO: per eliminare un media tenere premuto sull\'anteprima.</string>
     <string name="descrizioneSegnalazione">Descrizione</string>
-    <string name="descrizioneEmergenza">Aggiungi una descrizione della emergenza</string>
+    <string name="descrizioneEmergenza">Aggiungi una descrizione dell\'emergenza</string>
     <string name="incendio">Incendio</string>
     <string name="gas">Perdita di gas</string>
     <string name="frana">Frana</string>
     <string name="altro">Altro</string>
     <string name="neve">Allerta neve</string>
 
+    <string name="ok">Ok</string>
+
     <string name="erroreCredenziali">   Username o password errata. Riprovare.</string>
+
+    <string name="dialog_message">La segnalazione è stata inviata con successo. Nel caso siano richieste ulteriori informazioni verrà contattato telefonicamente.</string>
 </resources>

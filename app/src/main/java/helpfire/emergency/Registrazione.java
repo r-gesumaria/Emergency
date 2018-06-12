@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -22,12 +24,8 @@ public class Registrazione extends AppCompatActivity {
 
     private AutoCompleteTextView nomeUtente,cognomeUtente,cfUtente, dataNascitaUtente, comuneNascitaUtente, indirizzoUtente,capUtente,
         numTelUetente,emailUtente,userUtente, pswUtente, confPswUtente;
-    private Button btConf;
-    DatePickerDialog.OnDateSetListener mDateSetListener;
-
-    // CRED: nome del file sul quale verranno salvate le credenziali
-    private final static String CREDENZIALI = "credenziali";
-    private SharedPreferences.Editor edit;
+    private String nome,cognome, cf, numTel, user, psw;
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,120 +44,8 @@ public class Registrazione extends AppCompatActivity {
         userUtente = (AutoCompleteTextView) findViewById(R.id.usernameUetente);
         pswUtente = (AutoCompleteTextView) findViewById(R.id.pswUetente);
         confPswUtente = (AutoCompleteTextView) findViewById(R.id.confPswUetente);
-        btConf = (Button) findViewById(R.id.btConfReg);
 
         insertData();
-
-        SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
-        if(!credenziali.getString("username","").equals("") && !credenziali.getString("password","").equals("")){
-           startActivity(new Intent(getApplicationContext(),Segnalazione.class));
-        }
-
-        btConf.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //controllo che i campi obbligatori siano stati compilati
-                if(!nomeUtente.getText().toString().equals("") && !cognomeUtente.getText().toString().equals("") && !cfUtente.getText().toString().equals("") && !numTelUetente.getText().toString().equals("")
-                        && !userUtente.getText().toString().equals("") && !pswUtente.getText().toString().equals("") && !confPswUtente.getText().toString().equals("")){
-
-                    if(cfUtente.getText().toString().length()<16){
-                        Toast.makeText(Registrazione.this, "Il codice fiscale deve essere di 16 caratteri.", Toast.LENGTH_LONG).show();
-                        cfUtente.setError("Il codice fiscale deve essere di 16 caratteri.");
-                        cfUtente.setTextColor(Color.RED);
-                        cfUtente.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                                cfUtente.setTextColor(Color.BLACK);
-                                cfUtente.setError(null);
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable editable) {
-
-                            }
-                        });
-                    }else if(numTelUetente.getText().toString().length()<10){
-                        Toast.makeText(Registrazione.this, "Cifre non sufficienti.", Toast.LENGTH_LONG).show();
-                        numTelUetente.setError("Cifre non sufficienti.");
-                        numTelUetente.setTextColor(Color.RED);
-                        numTelUetente.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                            }
-
-                            @Override
-                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                                numTelUetente.setTextColor(Color.BLACK);
-                                numTelUetente.setError(null);
-                            }
-
-                            @Override
-                            public void afterTextChanged(Editable editable) {
-
-                            }
-                        });
-                    }else if(pswUtente.getText().toString().equalsIgnoreCase(confPswUtente.getText().toString())){
-                        //se l'utente non è già esistente salvo il nuovo utente altrimenti mostro il messaggio di errore
-                        try {
-                            Utente ut = new Utente(nomeUtente.getText().toString(),cognomeUtente.getText().toString(),cfUtente.getText().toString(),
-                                    dataNascitaUtente.getText().toString(),comuneNascitaUtente.getText().toString(),indirizzoUtente.getText().toString(),
-                                    capUtente.getText().toString(),numTelUetente.getText().toString(),emailUtente.getText().toString(), userUtente.getText().toString(),
-                                    pswUtente.getText().toString());
-
-                            Controller.inserisciUtente(ut);
-
-                            //salvo le credenziali per il successivo accesso all'applicazione
-                            SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
-                            edit = credenziali.edit();
-                            edit.putString("username", userUtente.getText().toString());
-                            edit.putString("password",pswUtente.getText().toString());
-                            edit.commit();
-
-                            clear();
-                            startActivity(new Intent(Registrazione.this,Login.class));
-
-                            Toast.makeText(Registrazione.this, "Registazione avvenuta con successo.", Toast.LENGTH_SHORT).show();
-                        } catch (IOException ioe){
-                            ioe.printStackTrace();
-                            Toast.makeText(Registrazione.this, ioe.getMessage(), Toast.LENGTH_LONG).show();
-                        } catch (ClassNotFoundException cne){
-                            cne.printStackTrace();
-                            Toast.makeText(Registrazione.this, cne.getMessage(), Toast.LENGTH_LONG).show();
-                        } catch(Exception e) {
-                            userUtente.setError(e.getMessage());
-                            Toast.makeText(Registrazione.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }else{
-                        confPswUtente.setError("Le password non coincidono!");
-                        Toast.makeText(Registrazione.this, "Le password non coincidono!", Toast.LENGTH_LONG).show();
-                        confPswUtente.addTextChangedListener(new TextWatcher() {
-                            @Override
-                            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                            }
-                            @Override
-                            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                                confPswUtente.setTextColor(Color.BLACK);
-                                confPswUtente.setError(null);
-                            }
-                            @Override
-                            public void afterTextChanged(Editable editable) {
-
-                            }
-                        });
-                    }
-                }else{
-                    Toast.makeText(Registrazione.this, "Compila tutti i campi obigatori!", Toast.LENGTH_LONG).show();
-                }
-
-            }
-        });
     }
 
     /**
@@ -178,7 +64,6 @@ public class Registrazione extends AppCompatActivity {
         userUtente.setText("");
         pswUtente.setText("");
         confPswUtente.setText("");
-        btConf.setText("");
     }
 
 
@@ -203,5 +88,125 @@ public class Registrazione extends AppCompatActivity {
                 dataNascitaUtente.setText(giorno+"/"+ (mese+1) + "/"+anno);
             }
         };
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.salva_registrazione, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_saveFile) {
+            registrazione();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void registrazione(){
+        nome = nomeUtente.getText().toString().trim();
+        cognome = cognomeUtente.getText().toString();
+        cf = cfUtente.getText().toString().trim();
+        numTel = numTelUetente.getText().toString().trim();
+        user= userUtente.getText().toString().trim();
+        psw = pswUtente.getText().toString().trim();
+        if(!nome.equals("") && !cognome.equals("") && !cf.equals("") && !numTel.equals("") && !user.equals("") && !psw.equals("") && !confPswUtente.getText().toString().trim().equals("")){
+
+            if(cf.length()<16){
+                Toast.makeText(Registrazione.this, "Il codice fiscale deve essere di 16 caratteri.", Toast.LENGTH_LONG).show();
+                cfUtente.setError("Il codice fiscale deve essere di 16 caratteri.");
+                cfUtente.setTextColor(Color.RED);
+                cfUtente.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        cfUtente.setTextColor(Color.BLACK);
+                        cfUtente.setError(null);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+            }else if(numTel.length()<10){
+                Toast.makeText(Registrazione.this, "Cifre non sufficienti.", Toast.LENGTH_LONG).show();
+                numTelUetente.setError("Cifre non sufficienti.");
+                numTelUetente.setTextColor(Color.RED);
+                numTelUetente.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        numTelUetente.setTextColor(Color.BLACK);
+                        numTelUetente.setError(null);
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+            }else if(psw.equals(confPswUtente.getText().toString().trim())){
+                //se l'utente non è già esistente salvo il nuovo utente altrimenti mostro il messaggio di errore
+                try {
+                    Utente ut = new Utente(nome,cognome,cf,dataNascitaUtente.getText().toString().trim(),
+                            comuneNascitaUtente.getText().toString().trim(),indirizzoUtente.getText().toString().trim(),
+                            capUtente.getText().toString().trim(),numTel,emailUtente.getText().toString().trim(), user,psw);
+
+                    Controller.inserisciUtente(ut);
+
+                    clear();
+                    startActivity(new Intent(Registrazione.this,Login.class));
+
+                    Toast.makeText(Registrazione.this, "Registazione avvenuta con successo.", Toast.LENGTH_SHORT).show();
+                } catch (IOException ioe){
+                    ioe.printStackTrace();
+                    Toast.makeText(Registrazione.this, ioe.getMessage(), Toast.LENGTH_LONG).show();
+                } catch (ClassNotFoundException cne){
+                    cne.printStackTrace();
+                    Toast.makeText(Registrazione.this, cne.getMessage(), Toast.LENGTH_LONG).show();
+                } catch(Exception e) {
+                    userUtente.setError(e.getMessage());
+                    Toast.makeText(Registrazione.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }else{
+                confPswUtente.setError("Le password non coincidono!");
+                Toast.makeText(Registrazione.this, "Le password non coincidono!", Toast.LENGTH_LONG).show();
+                confPswUtente.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        confPswUtente.setTextColor(Color.BLACK);
+                        confPswUtente.setError(null);
+                    }
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+
+                    }
+                });
+            }
+        }else{
+            Toast.makeText(Registrazione.this, "Compila tutti i campi obigatori!", Toast.LENGTH_LONG).show();
+        }
     }
 }

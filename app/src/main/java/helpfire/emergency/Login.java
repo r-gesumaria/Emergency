@@ -2,6 +2,7 @@ package helpfire.emergency;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -15,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +33,20 @@ public class Login extends AppCompatActivity {
     private AutoCompleteTextView userLogin, pswLogin;
     private ArrayList<Utente> lista;
 
+    // CRED: nome del file sul quale verranno salvate le credenziali
+    private final static String CREDENZIALI = "credenziali";
+    private SharedPreferences.Editor edit;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
+        if(!credenziali.getString("username","").equals("") && !credenziali.getString("password","").equals("")){
+            startActivity(new Intent(getApplicationContext(),Segnalazione.class));
+            finish();
+        }
+
         setContentView(R.layout.login);
 
         try {
@@ -54,7 +65,6 @@ public class Login extends AppCompatActivity {
         pswLogin = (AutoCompleteTextView) findViewById(R.id.pswLogin);
 
         richiediPermessi();
-        clearEdit();
 
         btRegistrati.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,9 +78,10 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 String user, psw;
-                user = userLogin.getText().toString();
-                psw = pswLogin.getText().toString();
+                user = userLogin.getText().toString().trim();
+                psw = pswLogin.getText().toString().trim();
 
+                //controllo che siano stati inseriti user e psw
                 if (user.equalsIgnoreCase("") || psw.equalsIgnoreCase("")) {
                     if (user.equalsIgnoreCase("")) {
                         userLogin.setError("Inserisci nome utente.");
@@ -83,12 +94,20 @@ public class Login extends AppCompatActivity {
                         lista = Controller.letturaFile();
 
                         if(lista != null){
+
                             Log.d("FILE", "lista in login " + lista);
                             for (int i = 0; i < lista.size(); i++) {
                                 if (lista.get(i).getUsername().equalsIgnoreCase(user) && lista.get(i).getPassword().equalsIgnoreCase(psw)) {
                                     contr = true;
-                                    startActivity(new Intent(Login.this, Segnalazione.class));
 
+                                    //salvo le credenziali per il successivo accesso all'applicazione
+                                    SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
+                                    edit = credenziali.edit();
+                                    edit.putString("username", user);
+                                    edit.putString("password",psw);
+                                    edit.commit();
+
+                                    startActivity(new Intent(Login.this, Segnalazione.class));
                                 }
                             }
 

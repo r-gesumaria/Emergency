@@ -40,6 +40,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
@@ -59,12 +62,15 @@ public class Segnalazione extends AppCompatActivity {
 
     static final int REQUEST_GALLERY = 0;
     private LinearLayout contAnteprime;
-    private EditText editLocation;
+    private EditText editLocation,editDescrizione;
+    private TextView tipoSegn;
     private ImageButton btCamera, btPosizione;
-    private String mCurrentPhotoPath;
+    private String mCurrentPhotoPath,latitudine, longitudine, tipo="", posizione="";
     static final int REQUEST_CAMERA = 1;
-    static final int ID_RICHIESTA_PERMISSION = 1;
+    static final int REQUEST_POS = 10;
     private LocationManager locationManager;
+    private RadioButton rdIncendio, rdNeve, rdAltro, rdGas, rdFrana;
+    private RadioGroup radioGroup;
 
 
     @Override
@@ -76,21 +82,16 @@ public class Segnalazione extends AppCompatActivity {
         btPosizione = (ImageButton) findViewById(R.id.btPosizione);
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
         editLocation = (EditText) findViewById(R.id.editLocation);
+        editDescrizione = (EditText) findViewById(R.id.editDescrizione);
+        tipoSegn = (TextView) findViewById(R.id.tipoSegn);
+
+        rdIncendio = (RadioButton)findViewById(R.id.rdIncendio);
+        rdNeve = (RadioButton)findViewById(R.id.rdNeve);
+        rdGas = (RadioButton)findViewById(R.id.rdGas);
+        rdAltro = (RadioButton)findViewById(R.id.rdAltro);
+        rdFrana = (RadioButton)findViewById(R.id.rdFrana);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        //permesssi
-        int statoPermissionWrite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int statoPermissionCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        int statoPermissionPos = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-        //int statoPermissionRead = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (statoPermissionWrite == PackageManager.PERMISSION_DENIED || statoPermissionCamera == PackageManager.PERMISSION_DENIED || statoPermissionPos == PackageManager.PERMISSION_DENIED) {
-            //|| statoPermissionRead == PackageManager.PERMISSION_DENIED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, ID_RICHIESTA_PERMISSION);
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
-            //ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, ID_RICHIESTA_PERMISSION);
-        }
 
         btCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -139,8 +140,32 @@ public class Segnalazione extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                if(rdIncendio.isChecked()){
+                    tipo = rdIncendio.getText().toString();
+                }else if(rdGas.isChecked()){
+                    tipo = rdGas.getText().toString();
+                }else if(rdNeve.isChecked()){
+                    tipo = rdNeve.getText().toString();
+                }else if(rdFrana.isChecked()){
+                    tipo = rdFrana.getText().toString();
+                }else if(rdAltro.isChecked()){
+                    tipo = rdAltro.getText().toString();
+                }
+               if(tipo.equals("") || (posizione.equals(""))){
+                    Toast.makeText(Segnalazione.this, "Compilare i campi obbligatori!", Toast.LENGTH_SHORT).show();
+               }else{
+                    Toast.makeText(Segnalazione.this, "Segnalazione inviata con successo.", Toast.LENGTH_SHORT).show();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                    builder.setMessage(R.string.dialog_message);
+                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                            clear();
+                        }
+                    });
+                    builder.show();
+               }
             }
         });
     }
@@ -281,8 +306,10 @@ public class Segnalazione extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_editAccount) {
+            startActivity(new Intent(getApplicationContext(),EditAccount.class));
             return true;
         }else if( id == R.id.action_help){
+            Toast.makeText(Segnalazione.this, "Guida utente", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -293,32 +320,29 @@ public class Segnalazione extends AppCompatActivity {
         @Override
         public void onLocationChanged(Location location) {
             Log.d("MIO","onLocationChanged");
-            String longitudine = String.valueOf(location.getLongitude());
-            String latitudine = String.valueOf(location.getLatitude());
-            Log.d("MIO","lat "+latitudine +"--long "+longitudine);
-
-                 /*----------to get City-Name from coordinates -------------*/
+            longitudine = String.valueOf(location.getLongitude());
+            latitudine = String.valueOf(location.getLatitude());
+            posizione = longitudine +":"+latitudine;
+            /*----------to get City-Name from coordinates -------------*/
             String cityName=null;
             Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
             List<Address> addresses;
             try {
                 addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                if (addresses.size() > 0)
-                    Log.d("MIO","località "+addresses.get(0).getLocality());
-                Log.d("MIO","country name "+addresses.get(0).getCountryName());
-                Log.d("MIO","country code "+addresses.get(0).getCountryCode());
-                Log.d("MIO","postal code "+addresses.get(0).getPostalCode());
-                Log.d("MIO","admin area "+addresses.get(0).getAdminArea());
-                Log.d("MIO","sublocality "+addresses.get(0).getAddressLine(0));
-                cityName=addresses.get(0).getAddressLine(0);
+                if (addresses.size() > 0) {
+                    Log.d("MIO", "località " + addresses.get(0).getLocality());
+                    Log.d("MIO", "country name " + addresses.get(0).getCountryName());
+                    Log.d("MIO", "country code " + addresses.get(0).getCountryCode());
+                    Log.d("MIO", "postal code " + addresses.get(0).getPostalCode());
+                    Log.d("MIO", "admin area " + addresses.get(0).getAdminArea());
+                    Log.d("MIO", "sublocality " + addresses.get(0).getAddressLine(0));
+                    cityName = addresses.get(0).getAddressLine(0);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
             editLocation.setText(cityName);
-
-
-
         }
 
         @Override
@@ -342,8 +366,7 @@ public class Segnalazione extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
-            case 10:
-                Log.d("MIO","onRequestPermissionsResult");
+            case REQUEST_POS:
                 ottieniPosizoine();
                 break;
             default:
@@ -354,9 +377,8 @@ public class Segnalazione extends AppCompatActivity {
     private void ottieniPosizoine() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Log.d("MIO","permessi");
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
-                        ,10);
+                        ,REQUEST_POS);
             }
             return;
         }
@@ -364,12 +386,25 @@ public class Segnalazione extends AppCompatActivity {
         btPosizione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("MIO","clicco");
                 //noinspection MissingPermission
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, new MyLocationListener());
             }
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
 
+    private void clear(){
+        rdIncendio.setChecked(false);
+        rdGas.setChecked(false);
+        rdNeve.setChecked(false);
+        rdFrana.setChecked(false);
+        rdAltro.setChecked(false);
+        editLocation.setText("");
+        editDescrizione.setText("");
+        contAnteprime.removeAllViews();
+    }
 }

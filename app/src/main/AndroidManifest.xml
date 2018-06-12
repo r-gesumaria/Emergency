@@ -19,10 +19,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Registrazione">
+        <activity android:name=".Registrazione"
+            android:label="Registrazione">
 
         </activity>
-        <activity android:name=".Segnalazione">
+        <activity android:name=".Segnalazione"
+            android:label="Segnala l'emergenza!">
+
+        </activity>
+        <activity android:name=".EditAccount"
+            android:label="Modifica dati account">
 
         </activity>
 
@@ -31,6 +37,7 @@
             android:authorities="com.helpfire.emergency.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
+
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths"></meta-data>
