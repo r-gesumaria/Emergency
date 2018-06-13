@@ -47,11 +47,16 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -71,13 +76,12 @@ public class Segnalazione extends AppCompatActivity {
 
     private static final int REQUEST_GALLERY = 0;
     private static final int REQUEST_CAMERA = 1;
+    private static final int PLACE_PICKER_REQUEST = 2;
     private static final int REQUEST_POS = 10;
-    private LinearLayout contAnteprime, linearPos;
-    private EditText editLocation,editDescrizione;
-    private ImageButton btCamera, btPosizione;
+    private LinearLayout contAnteprime;
+    private EditText editLocation,editDescrizione,textLocation;
+    private ImageButton btCamera, btGetPosizione, btPosizione;
     private String mCurrentPhotoPath,latitudine, longitudine, tipo="", posizione="";
-
-    private PlaceAutocompleteFragment autocompleteFragment;
 
     private LocationManager locationManager;
     private RadioButton rdIncendio, rdNeve, rdAltro, rdGas, rdFrana;
@@ -90,14 +94,13 @@ public class Segnalazione extends AppCompatActivity {
 
         btCamera = (ImageButton) findViewById(R.id.btCamera);
         btPosizione = (ImageButton) findViewById(R.id.btPosizione);
+        btGetPosizione = (ImageButton) findViewById(R.id.btGetPosizione);
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
-        linearPos = (LinearLayout) findViewById(R.id.lineraPos);
 
-        editLocation = new EditText(getApplicationContext());
-        autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        // placeAutocompleteFragment - is my PlaceAutocompleteFragment instance
-        //((EditText) autocompleteFragment.getView().findViewById(R.id.place_autocomplete_fragment)).setTextSize(10.0f);
-
+        editLocation = (EditText) findViewById(R.id.editLocation);
+        editLocation.setEnabled(false);
+        textLocation = (EditText) findViewById(R.id.textLocation);
+        textLocation.setEnabled(false);
         editDescrizione = (EditText) findViewById(R.id.editDescrizione);
 
         rdIncendio = (RadioButton)findViewById(R.id.rdIncendio);
@@ -106,27 +109,29 @@ public class Segnalazione extends AppCompatActivity {
         rdAltro = (RadioButton)findViewById(R.id.rdAltro);
         rdFrana = (RadioButton)findViewById(R.id.rdFrana);
 
+        if(editLocation.getText().toString().length() != 0) {
+            editLocation.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    elimina((EditText) view);
+                    return true;
+                }
+            });
+        }
+
+            textLocation.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    if(!textLocation.getText().toString().equals("")) {
+                        elimina((EditText) view);
+                        return true;
+                    }
+                    return false;
+                }
+            });
+
+
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                Log.d("TAG", "Place: " + place.getName());
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.d("TAG", "An error occurred: " + status);
-            }
-        });
-
-        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
-                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
-                .build();
-
-        autocompleteFragment.setFilter(typeFilter);
 
         btCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -158,6 +163,24 @@ public class Segnalazione extends AppCompatActivity {
                             }
                         });
                 builder.show();
+            }
+        });
+
+        btPosizione.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(textLocation.getText().toString().length() == 0) {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(Segnalazione.this), PLACE_PICKER_REQUEST);
+                    } catch (GooglePlayServicesRepairableException e) {
+                        e.printStackTrace();
+                    } catch (GooglePlayServicesNotAvailableException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    Toast.makeText(Segnalazione.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -200,6 +223,7 @@ public class Segnalazione extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("POS","requestcode "+requestCode);
         if (resultCode == this.RESULT_CANCELED) {
             return;
         }
@@ -208,13 +232,8 @@ public class Segnalazione extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    //String path = saveImage(bitmap);
-                    //Toast.makeText(Segnalazione.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                    ImageView imageView = new ImageView(getApplicationContext());
-                    //FrameLayout frameLayout = new FrameLayout(getApplicationContext());
 
-                    //LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(30, 30);
-                    //frameLayout.setLayoutParams(layoutParams1);
+                    ImageView imageView = new ImageView(getApplicationContext());
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
                     layoutParams.setMargins(0,0,10,10);
                     imageView.setLayoutParams(layoutParams);
@@ -243,30 +262,68 @@ public class Segnalazione extends AppCompatActivity {
                         }
                     });
                     contAnteprime.addView(imageView);
-                    //contAnteprime.addView(frameLayout);
-
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(Segnalazione.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
             }
-
         } else if (requestCode == REQUEST_CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             saveImage(thumbnail);
 
             ImageView imageView = new ImageView(getApplicationContext());
-            FrameLayout frameLayout = new FrameLayout(getApplicationContext());
-
-            LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(30, 30);
-            frameLayout.setLayoutParams(layoutParams1);
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
+            layoutParams.setMargins(0,0,10,10);
             imageView.setLayoutParams(layoutParams);
-
             imageView.setImageBitmap(thumbnail);
+            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(final View view) {
+                    Log.d("FOTO","long");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                    builder.setMessage(R.string.dialog_message_foto);
+                    builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            contAnteprime.removeView(view);
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    });
+                    builder.show();
+                    return true;
+                }
+            });
             contAnteprime.addView(imageView);
-            contAnteprime.addView(frameLayout);
+        }else if (requestCode == PLACE_PICKER_REQUEST) {
+                Place place = PlacePicker.getPlace(data, this);
+                Log.d("POS","Place"+ place.getName());
+                posizione = String.valueOf(place.getLatLng());
+                editLocation.setText(place.getName());
         }
+    }
+
+    private void elimina(final EditText editText){
+        AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+        builder.setMessage(R.string.dialog_message_pos);
+        builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                editText.setText("");
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+        builder.show();
+
     }
 
     public String saveImage(Bitmap myBitmap) {
@@ -340,7 +397,6 @@ public class Segnalazione extends AppCompatActivity {
         }
     }
 
-
     //classe per le coordinate
     private class MyLocationListener implements LocationListener {
         @Override
@@ -348,7 +404,7 @@ public class Segnalazione extends AppCompatActivity {
             Log.d("MIO","onLocationChanged");
             longitudine = String.valueOf(location.getLongitude());
             latitudine = String.valueOf(location.getLatitude());
-            posizione = longitudine +":"+latitudine;
+            posizione = "(" + longitudine +","+latitudine+")";
             /*----------to get City-Name from coordinates -------------*/
             String cityName=null;
             Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
@@ -367,8 +423,7 @@ public class Segnalazione extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            autocompleteFragment.setText(cityName);
-            //editLocation.setText(cityName);
+            textLocation.setText(cityName);
         }
 
         @Override
@@ -409,13 +464,18 @@ public class Segnalazione extends AppCompatActivity {
             return;
         }
 
-        btPosizione.setOnClickListener(new View.OnClickListener() {
+        btGetPosizione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //noinspection MissingPermission
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, new MyLocationListener());
+                if(editLocation.getText().toString().length() == 0) {
+                    //noinspection MissingPermission
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, new MyLocationListener());
+                }else
+                    Toast.makeText(Segnalazione.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
             }
         });
+
+
     }
 
     @Override
@@ -429,12 +489,11 @@ public class Segnalazione extends AppCompatActivity {
         rdNeve.setChecked(false);
         rdFrana.setChecked(false);
         rdAltro.setChecked(false);
-        autocompleteFragment.setText("");
-        //editLocation.setText("");
+        editLocation.setText("");
+        textLocation.setText("");
         editDescrizione.setText("");
         contAnteprime.removeAllViews();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

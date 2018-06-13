@@ -69,30 +69,56 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="10dp"
             android:paddingTop="20dp"
+            android:paddingRight="5dp"
             android:paddingBottom="10dp"
             android:textSize="@dimen/label"
             android:text="@string/indirizzoSegnalazione"/>
 
+
         <LinearLayout
-            android:id="@+id/lineraPos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp">
+
+            <EditText
+                android:id="@+id/textLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="5dp"
+                android:layout_weight="3"/>
+
+            <ImageButton
+                android:id="@+id/btGetPosizione"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#00ffffff"
+                android:src="@android:drawable/ic_dialog_map"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="10dp"
+            android:textSize="@dimen/label"
+            android:text="@string/indirizzoSegnalazione1"/>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <!--EditText
+            <EditText
                 android:id="@+id/editLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
-                android:layout_weight="3"/-->
-
-            <fragment
-                android:id="@+id/place_autocomplete_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                 android:layout_weight="3"/>
 
             <ImageButton
@@ -132,12 +158,12 @@
 
             <HorizontalScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="50dp"
                 android:layout_weight="2.7">
                 <LinearLayout
                     android:id="@+id/contAnteprime"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="50dp"
                     android:orientation="horizontal"
                     android:layout_weight="2.7">
 
