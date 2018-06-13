@@ -6,5 +6,6 @@
 
     <dimen name="titoli">20dp</dimen>
     <dimen name="label">15dp</dimen>
+    <dimen name="opzion">14dp</dimen>
     <dimen name="info">10dp</dimen>
 </resources>

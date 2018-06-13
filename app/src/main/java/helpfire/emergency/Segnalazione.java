@@ -74,14 +74,18 @@ import java.util.Locale;
  */
 public class Segnalazione extends AppCompatActivity {
 
+    private static final int ID_RICHIESTA_PERMISSION = 3;
     private static final int REQUEST_GALLERY = 0;
     private static final int REQUEST_CAMERA = 1;
     private static final int PLACE_PICKER_REQUEST = 2;
     private static final int REQUEST_POS = 10;
+
+    private MyLocationListener listener;
+
     private LinearLayout contAnteprime;
-    private EditText editLocation,editDescrizione,textLocation;
+    private EditText editLocation, editDescrizione, textLocation;
     private ImageButton btCamera, btGetPosizione, btPosizione;
-    private String mCurrentPhotoPath,latitudine, longitudine, tipo="", posizione="";
+    private String mCurrentPhotoPath, latitudine, longitudine, tipo = "", posizione = "";
 
     private LocationManager locationManager;
     private RadioButton rdIncendio, rdNeve, rdAltro, rdGas, rdFrana;
@@ -98,38 +102,38 @@ public class Segnalazione extends AppCompatActivity {
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
 
         editLocation = (EditText) findViewById(R.id.editLocation);
-        editLocation.setEnabled(false);
+        editLocation.setKeyListener(null);
         textLocation = (EditText) findViewById(R.id.textLocation);
-        textLocation.setEnabled(false);
+        textLocation.setKeyListener(null);
         editDescrizione = (EditText) findViewById(R.id.editDescrizione);
 
-        rdIncendio = (RadioButton)findViewById(R.id.rdIncendio);
-        rdNeve = (RadioButton)findViewById(R.id.rdNeve);
-        rdGas = (RadioButton)findViewById(R.id.rdGas);
-        rdAltro = (RadioButton)findViewById(R.id.rdAltro);
-        rdFrana = (RadioButton)findViewById(R.id.rdFrana);
+        rdIncendio = (RadioButton) findViewById(R.id.rdIncendio);
+        rdNeve = (RadioButton) findViewById(R.id.rdNeve);
+        rdGas = (RadioButton) findViewById(R.id.rdGas);
+        rdAltro = (RadioButton) findViewById(R.id.rdAltro);
+        rdFrana = (RadioButton) findViewById(R.id.rdFrana);
 
-        if(editLocation.getText().toString().length() != 0) {
-            editLocation.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
+        listener = new MyLocationListener();
+
+        editLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (editLocation.getText().toString().length() != 0) {
+                    Log.d("POS", "entro nel long");
                     elimina((EditText) view);
-                    return true;
                 }
-            });
-        }
+            }
+        });
 
-            textLocation.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    if(!textLocation.getText().toString().equals("")) {
-                        elimina((EditText) view);
-                        return true;
-                    }
-                    return false;
+        textLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!textLocation.getText().toString().equals("")) {
+                    Log.d("POS", "entro nel long");
+                    elimina((EditText) view);
                 }
-            });
-
+            }
+        });
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -169,6 +173,13 @@ public class Segnalazione extends AppCompatActivity {
         btPosizione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                int statoPermissionPos = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_FINE_LOCATION);
+                int statoPermissionLoc = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+                if (statoPermissionPos == PackageManager.PERMISSION_DENIED || statoPermissionLoc == PackageManager.PERMISSION_DENIED){
+                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                }
+                locationManager.removeUpdates(listener);
                 if(textLocation.getText().toString().length() == 0) {
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                     try {
@@ -184,7 +195,7 @@ public class Segnalazione extends AppCompatActivity {
             }
         });
 
-        ottieniPosizoine();
+        ottieniPosizione();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -201,11 +212,9 @@ public class Segnalazione extends AppCompatActivity {
                 }else if(rdAltro.isChecked()){
                     tipo = rdAltro.getText().toString();
                 }
-               if(tipo.equals("") || (posizione.equals(""))){
+                if(tipo.equals("") || (posizione.equals(""))){
                     Toast.makeText(Segnalazione.this, "Compilare i campi obbligatori!", Toast.LENGTH_SHORT).show();
-               }else{
-                    Toast.makeText(Segnalazione.this, "Segnalazione inviata con successo.", Toast.LENGTH_SHORT).show();
-
+                }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
                     builder.setMessage(R.string.dialog_message);
                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -215,7 +224,7 @@ public class Segnalazione extends AppCompatActivity {
                         }
                     });
                     builder.show();
-               }
+                }
             }
         });
     }
@@ -239,9 +248,9 @@ public class Segnalazione extends AppCompatActivity {
                     imageView.setLayoutParams(layoutParams);
 
                     imageView.setImageBitmap(bitmap);
-                    imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                    imageView.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public boolean onLongClick(final View view) {
+                        public void onClick(final View view) {
                             Log.d("FOTO","long");
                             AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
                             builder.setMessage(R.string.dialog_message_foto);
@@ -258,7 +267,6 @@ public class Segnalazione extends AppCompatActivity {
                                 }
                             });
                             builder.show();
-                            return true;
                         }
                     });
                     contAnteprime.addView(imageView);
@@ -276,9 +284,9 @@ public class Segnalazione extends AppCompatActivity {
             layoutParams.setMargins(0,0,10,10);
             imageView.setLayoutParams(layoutParams);
             imageView.setImageBitmap(thumbnail);
-            imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(final View view) {
+                public void onClick(final View view) {
                     Log.d("FOTO","long");
                     AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
                     builder.setMessage(R.string.dialog_message_foto);
@@ -295,19 +303,20 @@ public class Segnalazione extends AppCompatActivity {
                         }
                     });
                     builder.show();
-                    return true;
                 }
             });
             contAnteprime.addView(imageView);
         }else if (requestCode == PLACE_PICKER_REQUEST) {
-                Place place = PlacePicker.getPlace(data, this);
-                Log.d("POS","Place"+ place.getName());
-                posizione = String.valueOf(place.getLatLng());
-                editLocation.setText(place.getName());
+            Place place = PlacePicker.getPlace(data, this);
+            Log.d("POS","Place"+ place.getName());
+            posizione = String.valueOf(place.getLatLng());
+            textLocation.setText("");
+            editLocation.setText(place.getName());
         }
     }
 
     private void elimina(final EditText editText){
+        Log.d("POS","entro in elimina");
         AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
         builder.setMessage(R.string.dialog_message_pos);
         builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
@@ -401,29 +410,38 @@ public class Segnalazione extends AppCompatActivity {
     private class MyLocationListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            Log.d("MIO","onLocationChanged");
-            longitudine = String.valueOf(location.getLongitude());
-            latitudine = String.valueOf(location.getLatitude());
-            posizione = "(" + longitudine +","+latitudine+")";
-            /*----------to get City-Name from coordinates -------------*/
-            String cityName=null;
-            Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
-            List<Address> addresses;
-            try {
-                addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
-                if (addresses.size() > 0) {
-                    Log.d("MIO", "località " + addresses.get(0).getLocality());
-                    Log.d("MIO", "country name " + addresses.get(0).getCountryName());
-                    Log.d("MIO", "country code " + addresses.get(0).getCountryCode());
-                    Log.d("MIO", "postal code " + addresses.get(0).getPostalCode());
-                    Log.d("MIO", "admin area " + addresses.get(0).getAdminArea());
-                    Log.d("MIO", "sublocality " + addresses.get(0).getAddressLine(0));
-                    cityName = addresses.get(0).getAddressLine(0);
+            if(textLocation.getText().toString().equals("")) {
+                Log.d("MIO", "onLocationChanged");
+                longitudine = String.valueOf(location.getLongitude());
+                latitudine = String.valueOf(location.getLatitude());
+                posizione = "(" + longitudine + "," + latitudine + ")";
+                /*----------to get City-Name from coordinates -------------*/
+                String cityName = null;
+                Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+                List<Address> addresses;
+                try {
+                    addresses = gcd.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+                    if (addresses.size() > 0) {
+                        /*Log.d("MIO", "località " + addresses.get(0).getLocality());
+                        Log.d("MIO", "country name " + addresses.get(0).getCountryName());
+                        Log.d("MIO", "country code " + addresses.get(0).getCountryCode());
+                        Log.d("MIO", "postal code " + addresses.get(0).getPostalCode());
+                        Log.d("MIO", "admin area " + addresses.get(0).getAdminArea());
+                        Log.d("MIO", "sublocality " + addresses.get(0).getAddressLine(0));*/
+                        cityName = addresses.get(0).getAddressLine(0);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+                textLocation.setText(cityName);
+                int statoPermissionPos = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_FINE_LOCATION);
+                int statoPermissionLoc = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+                if (statoPermissionPos == PackageManager.PERMISSION_DENIED || statoPermissionLoc == PackageManager.PERMISSION_DENIED){
+                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                }
+                locationManager.removeUpdates(listener);
             }
-            textLocation.setText(cityName);
         }
 
         @Override
@@ -448,14 +466,15 @@ public class Segnalazione extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode){
             case REQUEST_POS:
-                ottieniPosizoine();
+                ottieniPosizione();
                 break;
             default:
                 break;
         }
     }
 
-    private void ottieniPosizoine() {
+    private void ottieniPosizione() {
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
@@ -464,18 +483,17 @@ public class Segnalazione extends AppCompatActivity {
             return;
         }
 
+        //ottieni posizione corrente
         btGetPosizione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(editLocation.getText().toString().length() == 0) {
                     //noinspection MissingPermission
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 0, new MyLocationListener());
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
                 }else
                     Toast.makeText(Segnalazione.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
 
     @Override
@@ -518,5 +536,15 @@ public class Segnalazione extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void permessi(){
+        int statoPermissionPos = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int statoPermissionLoc = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        if (statoPermissionPos == PackageManager.PERMISSION_DENIED || statoPermissionLoc == PackageManager.PERMISSION_DENIED){
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
+        }
     }
 }

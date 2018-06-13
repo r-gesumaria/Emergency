@@ -22,10 +22,11 @@
 
     <string name="aiutoSegnalazione">Segnala l\'emergenza!</string>
     <string name="tipoSegnalazione">Tipo di emergenza*</string>
-    <string name="indirizzoSegnalazione">Ottieni la tua posizione per segnalare l\'emergenza*</string>
+    <string name="indirizzoSegnalazione">Invia la tua posizione per segnalare l\'emergenza*</string>
     <string name="indirizzoSegnalazione1">Indica l\'indirizzo dell\'emergenza*</string>
     <string name="mediaSegnalazione">Aggiungi media</string>
-    <string name="infoMedia">INFO: per eliminare un media tenere premuto sull\'anteprima.</string>
+    <string name="infoMedia">INFO: per eliminare un media selezionare l\'anteprima.</string>
+    <string name="infoPos">INFO: per eliminare una posizone tenere premuto sull\'area di testo.</string>
     <string name="descrizioneSegnalazione">Descrizione</string>
     <string name="descrizioneEmergenza">Aggiungi una descrizione dell\'emergenza</string>
     <string name="incendio">Incendio</string>
@@ -41,6 +42,6 @@
     <string name="erroreCredenziali">   Username o password errata. Riprovare.</string>
 
     <string name="dialog_message">La segnalazione è stata inviata con successo. Nel caso siano richieste ulteriori informazioni verrà contattato telefonicamente.</string>
-    <string name="dialog_message_foto">Sei sicuro di voler eliminre la foto?</string>
-    <string name="dialog_message_pos">Sei sicuro di voler eliminre la posizione?</string>
+    <string name="dialog_message_foto">Sei sicuro di voler eliminare la foto?</string>
+    <string name="dialog_message_pos">Sei sicuro di voler eliminare la posizione?</string>
 </resources>
