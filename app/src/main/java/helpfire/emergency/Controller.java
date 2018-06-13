@@ -3,10 +3,6 @@ package helpfire.emergency;
 import android.content.Context;
 import android.util.Log;
 
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

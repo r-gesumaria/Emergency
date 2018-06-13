@@ -31,10 +31,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -45,11 +47,18 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -60,17 +69,18 @@ import java.util.Locale;
  */
 public class Segnalazione extends AppCompatActivity {
 
-    static final int REQUEST_GALLERY = 0;
-    private LinearLayout contAnteprime;
+    private static final int REQUEST_GALLERY = 0;
+    private static final int REQUEST_CAMERA = 1;
+    private static final int REQUEST_POS = 10;
+    private LinearLayout contAnteprime, linearPos;
     private EditText editLocation,editDescrizione;
-    private TextView tipoSegn;
     private ImageButton btCamera, btPosizione;
     private String mCurrentPhotoPath,latitudine, longitudine, tipo="", posizione="";
-    static final int REQUEST_CAMERA = 1;
-    static final int REQUEST_POS = 10;
+
+    private PlaceAutocompleteFragment autocompleteFragment;
+
     private LocationManager locationManager;
     private RadioButton rdIncendio, rdNeve, rdAltro, rdGas, rdFrana;
-    private RadioGroup radioGroup;
 
 
     @Override
@@ -81,9 +91,14 @@ public class Segnalazione extends AppCompatActivity {
         btCamera = (ImageButton) findViewById(R.id.btCamera);
         btPosizione = (ImageButton) findViewById(R.id.btPosizione);
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
-        editLocation = (EditText) findViewById(R.id.editLocation);
+        linearPos = (LinearLayout) findViewById(R.id.lineraPos);
+
+        editLocation = new EditText(getApplicationContext());
+        autocompleteFragment = (PlaceAutocompleteFragment)getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        // placeAutocompleteFragment - is my PlaceAutocompleteFragment instance
+        //((EditText) autocompleteFragment.getView().findViewById(R.id.place_autocomplete_fragment)).setTextSize(10.0f);
+
         editDescrizione = (EditText) findViewById(R.id.editDescrizione);
-        tipoSegn = (TextView) findViewById(R.id.tipoSegn);
 
         rdIncendio = (RadioButton)findViewById(R.id.rdIncendio);
         rdNeve = (RadioButton)findViewById(R.id.rdNeve);
@@ -92,6 +107,26 @@ public class Segnalazione extends AppCompatActivity {
         rdFrana = (RadioButton)findViewById(R.id.rdFrana);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                Log.d("TAG", "Place: " + place.getName());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.d("TAG", "An error occurred: " + status);
+            }
+        });
+
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+                .build();
+
+        autocompleteFragment.setFilter(typeFilter);
 
         btCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -116,21 +151,13 @@ public class Segnalazione extends AppCompatActivity {
 
                                     case 1:
                                         dispatchTakePictureIntent();
-                                        //galleryAddPic();
-                                        /*Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                                        }*/
                                         break;
-
                                     default:
                                         break;
                                 }
                             }
                         });
-
                 builder.show();
-
             }
         });
 
@@ -184,16 +211,39 @@ public class Segnalazione extends AppCompatActivity {
                     //String path = saveImage(bitmap);
                     //Toast.makeText(Segnalazione.this, "Image Saved!", Toast.LENGTH_SHORT).show();
                     ImageView imageView = new ImageView(getApplicationContext());
-                    FrameLayout frameLayout = new FrameLayout(getApplicationContext());
+                    //FrameLayout frameLayout = new FrameLayout(getApplicationContext());
 
-                    LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(30, 30);
-                    frameLayout.setLayoutParams(layoutParams1);
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(100, 100);
+                    //LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(30, 30);
+                    //frameLayout.setLayoutParams(layoutParams1);
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
+                    layoutParams.setMargins(0,0,10,10);
                     imageView.setLayoutParams(layoutParams);
 
                     imageView.setImageBitmap(bitmap);
+                    imageView.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(final View view) {
+                            Log.d("FOTO","long");
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                            builder.setMessage(R.string.dialog_message_foto);
+                            builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    contAnteprime.removeView(view);
+                                    dialog.dismiss();
+                                }
+                            });
+                            builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            builder.show();
+                            return true;
+                        }
+                    });
                     contAnteprime.addView(imageView);
-                    contAnteprime.addView(frameLayout);
+                    //contAnteprime.addView(frameLayout);
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -290,30 +340,6 @@ public class Segnalazione extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_opzioni, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_editAccount) {
-            startActivity(new Intent(getApplicationContext(),EditAccount.class));
-            return true;
-        }else if( id == R.id.action_help){
-            Toast.makeText(Segnalazione.this, "Guida utente", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     //classe per le coordinate
     private class MyLocationListener implements LocationListener {
@@ -341,8 +367,8 @@ public class Segnalazione extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            editLocation.setText(cityName);
+            autocompleteFragment.setText(cityName);
+            //editLocation.setText(cityName);
         }
 
         @Override
@@ -403,8 +429,35 @@ public class Segnalazione extends AppCompatActivity {
         rdNeve.setChecked(false);
         rdFrana.setChecked(false);
         rdAltro.setChecked(false);
-        editLocation.setText("");
+        autocompleteFragment.setText("");
+        //editLocation.setText("");
         editDescrizione.setText("");
         contAnteprime.removeAllViews();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_opzioni, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_editAccount) {
+            startActivity(new Intent(getApplicationContext(),EditAccount.class));
+            return true;
+        }else if( id == R.id.action_help){
+            Toast.makeText(Segnalazione.this, "Guida utente", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

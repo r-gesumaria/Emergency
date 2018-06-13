@@ -34,8 +34,11 @@
     <string name="neve">Allerta neve</string>
 
     <string name="ok">Ok</string>
+    <string name="elimina">Elimina</string>
+    <string name="annulla">Annulla</string>
 
     <string name="erroreCredenziali">   Username o password errata. Riprovare.</string>
 
     <string name="dialog_message">La segnalazione è stata inviata con successo. Nel caso siano richieste ulteriori informazioni verrà contattato telefonicamente.</string>
+    <string name="dialog_message_foto">Sei sicuro di voler eliminre la foto?</string>
 </resources>

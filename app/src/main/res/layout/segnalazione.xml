@@ -76,17 +76,23 @@
             android:text="@string/indirizzoSegnalazione"/>
 
         <LinearLayout
+            android:id="@+id/lineraPos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp">
+            android:orientation="horizontal">
 
-            <EditText
+            <!--EditText
                 android:id="@+id/editLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="5dp"
+                android:layout_weight="3"/-->
+
+            <fragment
+                android:id="@+id/place_autocomplete_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                 android:layout_weight="3"/>
 
             <ImageButton
@@ -94,6 +100,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#00ffffff"
+                android:layout_gravity="center_vertical"
                 android:src="@android:drawable/ic_dialog_map"
                 android:layout_weight="1"/>
 
