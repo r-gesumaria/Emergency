@@ -32,6 +32,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -216,13 +217,16 @@ public class Segnalazione extends AppCompatActivity {
                     Toast.makeText(Segnalazione.this, "Compilare i campi obbligatori!", Toast.LENGTH_SHORT).show();
                 }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
-                    builder.setMessage(R.string.dialog_message);
+                    LayoutInflater inflater = Segnalazione.this.getLayoutInflater();
+                    View dialogView = inflater.inflate(R.layout.alert_invio_segnalazione,null);
+                    builder.setView(dialogView);
                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
                             clear();
                         }
                     });
+                    builder.setCancelable(false);
                     builder.show();
                 }
             }
@@ -253,6 +257,7 @@ public class Segnalazione extends AppCompatActivity {
                         public void onClick(final View view) {
                             Log.d("FOTO","long");
                             AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                            builder.setTitle(R.string.titoloElimina);
                             builder.setMessage(R.string.dialog_message_foto);
                             builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -289,6 +294,7 @@ public class Segnalazione extends AppCompatActivity {
                 public void onClick(final View view) {
                     Log.d("FOTO","long");
                     AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                    builder.setTitle(R.string.titoloElimina);
                     builder.setMessage(R.string.dialog_message_foto);
                     builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {

@@ -38,6 +38,7 @@
     <string name="ok">Ok</string>
     <string name="elimina">Elimina</string>
     <string name="annulla">Annulla</string>
+    <string name="titoloElimina">Elimina</string>
 
     <string name="erroreCredenziali">   Username o password errata. Riprovare.</string>
 

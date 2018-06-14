@@ -103,7 +103,7 @@
                 android:background="#00ffffff"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:src="@android:drawable/ic_dialog_map"
+                android:src="@drawable/ic_my_position"
                 android:layout_weight="1"/>
 
         </LinearLayout>
@@ -141,7 +141,7 @@
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:layout_gravity="center_vertical"
-                android:src="@android:drawable/ic_dialog_map"
+                android:src="@drawable/ic_position"
                 android:layout_weight="1"/>
 
         </LinearLayout>
@@ -186,7 +186,7 @@
                 android:background="#00ffffff"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:src="@android:drawable/ic_menu_camera"
+                android:src="@drawable/ic_camera_dark"
                 android:layout_weight="0.3"/>
 
         </LinearLayout>
@@ -200,8 +200,9 @@
             android:text="@string/descrizioneSegnalazione"/>
 
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/editDescrizione" />
