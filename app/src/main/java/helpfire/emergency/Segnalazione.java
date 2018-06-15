@@ -128,8 +128,8 @@ public class Segnalazione extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
-                builder.setTitle("Choose Image Source");
-                builder.setItems(new CharSequence[]{"Gallery", "Camera"},
+                builder.setTitle("Scegli immagine da:");
+                builder.setItems(new CharSequence[]{"Galleria", "Fotocamera"},
                         new DialogInterface.OnClickListener() {
 
                             @Override
@@ -139,14 +139,15 @@ public class Segnalazione extends AppCompatActivity {
                                         // GET IMAGE FROM THE GALLERY
                                         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                                         intent.setType("image/*");
-
                                         Intent chooser = Intent.createChooser(intent, "Choose a Picture");
-                                        chooser.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                                         startActivityForResult(chooser, REQUEST_GALLERY);
                                         break;
 
                                     case 1:
-                                        dispatchTakePictureIntent();
+                                        // GET IMAGE FROM CAMERA
+                                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                        startActivityForResult(takePictureIntent, REQUEST_CAMERA);
+
                                         break;
                                     default:
                                         break;
@@ -336,53 +337,6 @@ public class Segnalazione extends AppCompatActivity {
             e1.printStackTrace();
         }
         return "";
-    }
-
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        //File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File root = Environment.getExternalStorageDirectory();
-        //File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        //Log.d("FOTO","root "+ root);
-        File directory = new File(root.getAbsolutePath()+"/DCIM/Emergency1");
-
-        directory.mkdir();
-        Log.d("FOTO","dir "+directory);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                directory      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        Log.d("FOTO"," mCurrentPhotoPath "+ mCurrentPhotoPath);
-        return image;
-    }
-
-    private void dispatchTakePictureIntent(){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        // Ensure that there's a camera activity to handle the intent
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            // Create the File where the photo should go
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                // Error occurred while creating the File
-                ex.printStackTrace();
-            }
-            // Continue only if the File was successfully created
-            if (photoFile != null) {
-                Uri photoURI = FileProvider.getUriForFile(this, "com.helpfire.emergency.fileprovider", photoFile);
-                Log.d("FOTO","uri "+ photoURI);
-                takePictureIntent.putExtra("uri", photoURI);
-                takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                startActivityForResult(takePictureIntent, REQUEST_CAMERA);
-            }
-        }
     }
 
     //classe per le coordinate
