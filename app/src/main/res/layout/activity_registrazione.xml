@@ -217,7 +217,19 @@
                 android:singleLine="true" />
 
         </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/btConeferma"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textAllCaps="false"
+            android:background="@drawable/button"
+            android:text="@string/conf"/>
     </LinearLayout>
+
 
 
 </ScrollView>

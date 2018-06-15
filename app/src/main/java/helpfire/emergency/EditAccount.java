@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class EditAccount extends AppCompatActivity {
     private AutoCompleteTextView nomeUtente,cognomeUtente,cfUtente, dataNascitaUtente, comuneNascitaUtente, indirizzoUtente,capUtente,
             numTelUetente,emailUtente,userUtente, pswUtente, confPswUtente;
     private TextInputLayout confermaPsw;
+    private Button btConf;
 
     private ArrayList<Utente> lista;
     private String nome,cognome, cf, numTel, user, psw;
@@ -58,6 +60,13 @@ public class EditAccount extends AppCompatActivity {
         confPswUtente = (AutoCompleteTextView) findViewById(R.id.confPswUetente);
         confermaPsw = (TextInputLayout) findViewById(R.id.confermaPsw);
         confermaPsw.setVisibility(View.INVISIBLE);
+        btConf = (Button) findViewById(R.id.btConeferma);
+        btConf.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                controlloCampi();
+            }
+        });
 
         //acquisisco le credenziali dell'utente
         SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
@@ -214,7 +223,7 @@ public class EditAccount extends AppCompatActivity {
         }
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.salva_registrazione, menu);
@@ -234,5 +243,5 @@ public class EditAccount extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }

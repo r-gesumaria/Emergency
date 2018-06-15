@@ -16,6 +16,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -115,10 +117,11 @@ public class Login extends AppCompatActivity {
                                     builder.setMessage(R.string.dialog_message_login);
                                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            startActivity(new Intent(Login.this, Segnalazione.class));
+                                            startActivity(new Intent(Login.this, Segnalazione2.class));
                                             dialog.dismiss();
                                         }
                                     });
+                                    builder.setCancelable(false);
                                     builder.show();
                                 }
                             }
@@ -198,5 +201,27 @@ public class Login extends AppCompatActivity {
     private void clearEdit(){
         pswLogin.setText("");
         userLogin.setText("");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_guida, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_info) {
+            Toast.makeText(Login.this, "Guida utente.", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
