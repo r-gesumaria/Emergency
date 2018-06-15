@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
+            android:layout_marginBottom="10dp"
             android:orientation="vertical">
 
             <!--RelativeLayout
@@ -71,35 +72,22 @@
                 </RadioGroup>
             <!--/RelativeLayout-->
         </LinearLayout>
-        <TextView
+        <Button
+            android:id="@+id/btPosizione2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
+            android:drawableLeft="@drawable/ic_my_position"
+            android:textAllCaps="false"
+            android:background="@drawable/button_segnalazione"
             android:textSize="@dimen/label"
             android:textStyle="bold"
             android:text="@string/indirizzoSegnalazione"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/info"
-            android:text="@string/infoPos"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/btGetPosizione"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_segnalazione"
-                android:layout_marginTop="5dp"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:src="@drawable/ic_my_position"
-                android:layout_weight="1"/>
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp">
 
             <EditText
                 android:id="@+id/textLocation"
@@ -108,39 +96,32 @@
                 android:paddingRight="5dp"
                 android:layout_weight="3"/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/info"
+                android:text="@string/infoPos"/>
 
 
         </LinearLayout>
 
-        <TextView
+        <Button
+            android:id="@+id/btGetPosizione2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="20dp"
+            android:drawableLeft="@drawable/ic_position"
+            android:textAllCaps="false"
+            android:background="@drawable/button_segnalazione"
             android:textSize="@dimen/label"
             android:textStyle="bold"
             android:text="@string/indirizzoSegnalazione1"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/info"
-            android:text="@string/infoPos"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <ImageButton
-                android:id="@+id/btPosizione"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_segnalazione"
-                android:paddingTop="5dp"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_position"
-                android:layout_weight="1"/>
+            android:orientation="vertical">
+
 
             <EditText
                 android:id="@+id/editLocation"
@@ -149,43 +130,21 @@
                 android:paddingRight="5dp"
                 android:layout_weight="3"/>
 
-
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/info"
+                android:text="@string/infoPos"/>
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:textSize="@dimen/label"
-            android:textStyle="bold"
-            android:text="@string/mediaSegnalazione"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/info"
-            android:text="@string/infoMedia"/>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:weightSum="3">
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_weight="2.7">
-                <LinearLayout
-                    android:id="@+id/contAnteprime"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:orientation="horizontal"
-                    android:layout_weight="2.7">
-
-                </LinearLayout>
-            </HorizontalScrollView>
-
             <ImageButton
                 android:id="@+id/btCamera"
                 android:layout_width="wrap_content"
@@ -194,8 +153,47 @@
                 android:layout_marginTop="5dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_camera_dark"
                 android:layout_weight="0.3"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textSize="@dimen/label"
+                    android:textStyle="bold"
+                    android:text="@string/mediaSegnalazione"/>
+
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_weight="2.7">
+                    <LinearLayout
+                        android:id="@+id/contAnteprime"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:orientation="horizontal"
+                        android:layout_weight="2.7">
+
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/info"
+                    android:text="@string/infoMedia"/>
+            </LinearLayout>
+
+
+
+
 
         </LinearLayout>
 

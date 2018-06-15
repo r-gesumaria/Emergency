@@ -1,6 +1,7 @@
 package helpfire.emergency;
 
 import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -9,10 +10,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -43,7 +46,7 @@ public class Login extends AppCompatActivity {
 
         SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
         if(!credenziali.getString("username","").equals("") && !credenziali.getString("password","").equals("")){
-            startActivity(new Intent(getApplicationContext(),Segnalazione.class));
+            startActivity(new Intent(getApplicationContext(),Segnalazione2.class));
             finish();
         }
 
@@ -107,7 +110,16 @@ public class Login extends AppCompatActivity {
                                     edit.putString("password",psw);
                                     edit.commit();
 
-                                    startActivity(new Intent(Login.this, Segnalazione.class));
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
+                                    builder.setTitle(R.string.info);
+                                    builder.setMessage(R.string.dialog_message_login);
+                                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            startActivity(new Intent(Login.this, Segnalazione.class));
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    builder.show();
                                 }
                             }
 

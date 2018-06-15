@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -54,7 +55,7 @@ import java.util.Locale;
 /**
  * Created by Roberta on 01/06/2018.
  */
-public class Segnalazione extends AppCompatActivity {
+public class Segnalazione2 extends AppCompatActivity {
 
     private static final int ID_RICHIESTA_PERMISSION = 3;
     private static final int REQUEST_GALLERY = 0;
@@ -66,7 +67,8 @@ public class Segnalazione extends AppCompatActivity {
 
     private LinearLayout contAnteprime;
     private EditText editLocation, editDescrizione, textLocation;
-    private ImageButton btCamera, btGetPosizione, btPosizione;
+    private ImageButton btCamera;
+    private Button btGetPosizione, btPosizione;
     private String mCurrentPhotoPath, latitudine, longitudine, tipo = "", posizione = "";
 
     private LocationManager locationManager;
@@ -79,8 +81,8 @@ public class Segnalazione extends AppCompatActivity {
         setContentView(R.layout.activity_segnalazione);
 
         btCamera = (ImageButton) findViewById(R.id.btCamera);
-        btPosizione = (ImageButton) findViewById(R.id.btPosizione);
-        btGetPosizione = (ImageButton) findViewById(R.id.btGetPosizione);
+        btPosizione = (Button) findViewById(R.id.btGetPosizione2);
+        btGetPosizione = (Button) findViewById(R.id.btPosizione2);
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
 
         editLocation = (EditText) findViewById(R.id.editLocation);
@@ -122,7 +124,7 @@ public class Segnalazione extends AppCompatActivity {
         btCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione2.this);
                 builder.setTitle("Choose Image Source");
                 builder.setItems(new CharSequence[]{"Gallery", "Camera"},
                         new DialogInterface.OnClickListener() {
@@ -155,24 +157,24 @@ public class Segnalazione extends AppCompatActivity {
         btPosizione.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int statoPermissionPos = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_FINE_LOCATION);
-                int statoPermissionLoc = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+                int statoPermissionPos = ContextCompat.checkSelfPermission(Segnalazione2.this, Manifest.permission.ACCESS_FINE_LOCATION);
+                int statoPermissionLoc = ContextCompat.checkSelfPermission(Segnalazione2.this, Manifest.permission.ACCESS_COARSE_LOCATION);
                 if (statoPermissionPos == PackageManager.PERMISSION_DENIED || statoPermissionLoc == PackageManager.PERMISSION_DENIED){
-                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
-                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                    ActivityCompat.requestPermissions(Segnalazione2.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                    ActivityCompat.requestPermissions(Segnalazione2.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
                 }
                 locationManager.removeUpdates(listener);
                 if(textLocation.getText().toString().length() == 0) {
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                     try {
-                        startActivityForResult(builder.build(Segnalazione.this), PLACE_PICKER_REQUEST);
+                        startActivityForResult(builder.build(Segnalazione2.this), PLACE_PICKER_REQUEST);
                     } catch (GooglePlayServicesRepairableException e) {
                         e.printStackTrace();
                     } catch (GooglePlayServicesNotAvailableException e) {
                         e.printStackTrace();
                     }
                 }else{
-                    Toast.makeText(Segnalazione.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Segnalazione2.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -195,10 +197,10 @@ public class Segnalazione extends AppCompatActivity {
                     tipo = rdAltro.getText().toString();
                 }
                 if(tipo.equals("") || (posizione.equals(""))){
-                    Toast.makeText(Segnalazione.this, "Compilare i campi obbligatori!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Segnalazione2.this, "Compilare i campi obbligatori!", Toast.LENGTH_SHORT).show();
                 }else{
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
-                    LayoutInflater inflater = Segnalazione.this.getLayoutInflater();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione2.this);
+                    LayoutInflater inflater = Segnalazione2.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.alert_invio_segnalazione,null);
                     builder.setView(dialogView);
                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -237,7 +239,7 @@ public class Segnalazione extends AppCompatActivity {
                         @Override
                         public void onClick(final View view) {
                             Log.d("FOTO","long");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                            AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione2.this);
                             builder.setTitle(R.string.titoloElimina);
                             builder.setMessage(R.string.dialog_message_foto);
                             builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
@@ -258,7 +260,7 @@ public class Segnalazione extends AppCompatActivity {
                     contAnteprime.addView(imageView);
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Toast.makeText(Segnalazione.this, "Failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Segnalazione2.this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
             }
         } else if (requestCode == REQUEST_CAMERA) {
@@ -274,7 +276,7 @@ public class Segnalazione extends AppCompatActivity {
                 @Override
                 public void onClick(final View view) {
                     Log.d("FOTO","long");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione2.this);
                     builder.setTitle(R.string.titoloElimina);
                     builder.setMessage(R.string.dialog_message_foto);
                     builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
@@ -304,7 +306,7 @@ public class Segnalazione extends AppCompatActivity {
 
     private void elimina(final EditText editText){
         Log.d("POS","entro in elimina");
-        AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione2.this);
         builder.setTitle(R.string.titoloElimina);
         builder.setMessage(R.string.dialog_message_pos);
         builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
@@ -422,11 +424,11 @@ public class Segnalazione extends AppCompatActivity {
                     e.printStackTrace();
                 }
                 textLocation.setText(cityName);
-                int statoPermissionPos = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_FINE_LOCATION);
-                int statoPermissionLoc = ContextCompat.checkSelfPermission(Segnalazione.this, Manifest.permission.ACCESS_COARSE_LOCATION);
+                int statoPermissionPos = ContextCompat.checkSelfPermission(Segnalazione2.this, Manifest.permission.ACCESS_FINE_LOCATION);
+                int statoPermissionLoc = ContextCompat.checkSelfPermission(Segnalazione2.this, Manifest.permission.ACCESS_COARSE_LOCATION);
                 if (statoPermissionPos == PackageManager.PERMISSION_DENIED || statoPermissionLoc == PackageManager.PERMISSION_DENIED){
-                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
-                    ActivityCompat.requestPermissions(Segnalazione.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                    ActivityCompat.requestPermissions(Segnalazione2.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, ID_RICHIESTA_PERMISSION);
+                    ActivityCompat.requestPermissions(Segnalazione2.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, ID_RICHIESTA_PERMISSION);
                 }
                 locationManager.removeUpdates(listener);
             }
@@ -479,7 +481,7 @@ public class Segnalazione extends AppCompatActivity {
                     //noinspection MissingPermission
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
                 }else
-                    Toast.makeText(Segnalazione.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(Segnalazione2.this, "Hai già inserito una posizione.", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -520,7 +522,7 @@ public class Segnalazione extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(),EditAccount.class));
             return true;
         }else if( id == R.id.action_help){
-            Toast.makeText(Segnalazione.this, "Guida utente", Toast.LENGTH_SHORT).show();
+            Toast.makeText(Segnalazione2.this, "Guida utente", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onOptionsItemSelected(item);
