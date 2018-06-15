@@ -26,7 +26,6 @@
     <string name="indirizzoSegnalazione">Invia la tua posizione per segnalare l\'emergenza*</string>
     <string name="indirizzoSegnalazione1">Indica l\'indirizzo dell\'emergenza*</string>
     <string name="mediaSegnalazione">Aggiungi media</string>
-    <string name="infoMedia">INFO: per eliminare un media selezionare l\'anteprima.</string>
     <string name="infoPos">INFO: per eliminare una posizone premere sull\'area di testo.</string>
     <string name="descrizioneSegnalazione">Descrizione</string>
     <string name="descrizioneEmergenza">Aggiungi una descrizione dell\'emergenza</string>

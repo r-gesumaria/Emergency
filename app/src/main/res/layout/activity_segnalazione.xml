@@ -7,7 +7,7 @@
     android:fitsSystemWindows="true"
     tools:context="helpfire.emergency.Segnalazione">
 
-    <include layout="@layout/segnalazione2" />
+    <include layout="@layout/segnalazione" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

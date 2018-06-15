@@ -25,12 +25,14 @@ import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -41,6 +43,7 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.vision.Frame;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -228,36 +231,7 @@ public class Segnalazione extends AppCompatActivity {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-
-                    ImageView imageView = new ImageView(getApplicationContext());
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
-                    layoutParams.setMargins(0,0,10,10);
-                    imageView.setLayoutParams(layoutParams);
-
-                    imageView.setImageBitmap(bitmap);
-                    imageView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View view) {
-                            Log.d("FOTO","long");
-                            AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
-                            builder.setTitle(R.string.titoloElimina);
-                            builder.setMessage(R.string.dialog_message_foto);
-                            builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    contAnteprime.removeView(view);
-                                    dialog.dismiss();
-                                }
-                            });
-                            builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                    dialogInterface.dismiss();
-                                }
-                            });
-                            builder.show();
-                        }
-                    });
-                    contAnteprime.addView(imageView);
+                    aggiungiFoto(bitmap);
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(Segnalazione.this, "Failed!", Toast.LENGTH_SHORT).show();
@@ -266,35 +240,7 @@ public class Segnalazione extends AppCompatActivity {
         } else if (requestCode == REQUEST_CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             saveImage(thumbnail);
-
-            ImageView imageView = new ImageView(getApplicationContext());
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(200, 200);
-            layoutParams.setMargins(0,0,10,10);
-            imageView.setLayoutParams(layoutParams);
-            imageView.setImageBitmap(thumbnail);
-            imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    Log.d("FOTO","long");
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
-                    builder.setTitle(R.string.titoloElimina);
-                    builder.setMessage(R.string.dialog_message_foto);
-                    builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            contAnteprime.removeView(view);
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    });
-                    builder.show();
-                }
-            });
-            contAnteprime.addView(imageView);
+            aggiungiFoto(thumbnail);
         }else if (requestCode == PLACE_PICKER_REQUEST) {
             Place place = PlacePicker.getPlace(data, this);
             Log.d("POS","Place"+ place.getName());
@@ -302,6 +248,49 @@ public class Segnalazione extends AppCompatActivity {
             textLocation.setText("");
             editLocation.setText(place.getName());
         }
+    }
+
+    private void aggiungiFoto(Bitmap foto){
+        final FrameLayout frame = new FrameLayout(getApplicationContext());
+        LinearLayout.LayoutParams layoutFrame = new LinearLayout.LayoutParams(250, 250);
+        frame.setLayoutParams(layoutFrame);
+
+        ImageButton btElina = new ImageButton(getApplicationContext());
+        LinearLayout.LayoutParams layoutX = new LinearLayout.LayoutParams(50, 50);
+        btElina.setLayoutParams(layoutX);
+        btElina.setBackground(getDrawable(R.drawable.elimina));
+
+        ImageView imageView = new ImageView(getApplicationContext());
+        LinearLayout.LayoutParams layoutImage = new LinearLayout.LayoutParams(200, 200);
+        layoutImage.setMargins(0,0,10,10);
+        imageView.setLayoutParams(layoutImage);
+
+        imageView.setImageBitmap(foto);
+        btElina.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                Log.d("FOTO","long");
+                AlertDialog.Builder builder = new AlertDialog.Builder(Segnalazione.this);
+                builder.setTitle(R.string.titoloElimina);
+                builder.setMessage(R.string.dialog_message_foto);
+                builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        contAnteprime.removeView(frame);
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton(R.string.annulla, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                builder.show();
+            }
+        });
+        frame.addView(imageView);
+        frame.addView(btElina);
+        contAnteprime.addView(frame);
     }
 
     private void elimina(final EditText editText){
