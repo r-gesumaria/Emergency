@@ -28,7 +28,7 @@
             android:label="Registrazione">
 
         </activity>
-        <activity android:name=".Segnalazione2"
+        <activity android:name=".Segnalazione"
             android:label="Segnala l'emergenza!">
 
         </activity>

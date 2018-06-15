@@ -29,6 +29,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -66,7 +67,8 @@ public class Segnalazione extends AppCompatActivity {
 
     private LinearLayout contAnteprime;
     private EditText editLocation, editDescrizione, textLocation;
-    private ImageButton btCamera, btGetPosizione, btPosizione;
+    private ImageButton btCamera;
+    private Button btGetPosizione, btPosizione;
     private String mCurrentPhotoPath, latitudine, longitudine, tipo = "", posizione = "";
 
     private LocationManager locationManager;
@@ -79,8 +81,8 @@ public class Segnalazione extends AppCompatActivity {
         setContentView(R.layout.activity_segnalazione);
 
         btCamera = (ImageButton) findViewById(R.id.btCamera);
-        btPosizione = (ImageButton) findViewById(R.id.btPosizione);
-        btGetPosizione = (ImageButton) findViewById(R.id.btGetPosizione);
+        btPosizione = (Button) findViewById(R.id.btGetPosizione2);
+        btGetPosizione = (Button) findViewById(R.id.btPosizione2);
         contAnteprime = (LinearLayout) findViewById(R.id.contAnteprime);
 
         editLocation = (EditText) findViewById(R.id.editLocation);
@@ -499,6 +501,8 @@ public class Segnalazione extends AppCompatActivity {
         textLocation.setText("");
         editDescrizione.setText("");
         contAnteprime.removeAllViews();
+        posizione = "";
+        tipo = "";
     }
 
     @Override

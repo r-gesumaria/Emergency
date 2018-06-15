@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,7 +47,7 @@ public class Login extends AppCompatActivity {
 
         SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
         if(!credenziali.getString("username","").equals("") && !credenziali.getString("password","").equals("")){
-            startActivity(new Intent(getApplicationContext(),Segnalazione2.class));
+            startActivity(new Intent(getApplicationContext(),Segnalazione.class));
             finish();
         }
 
@@ -117,7 +116,7 @@ public class Login extends AppCompatActivity {
                                     builder.setMessage(R.string.dialog_message_login);
                                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            startActivity(new Intent(Login.this, Segnalazione2.class));
+                                            startActivity(new Intent(Login.this, Segnalazione.class));
                                             dialog.dismiss();
                                         }
                                     });
