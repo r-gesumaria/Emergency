@@ -1,17 +1,11 @@
 package helpfire.emergency;
 
-import android.*;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NavUtils;
-import android.support.v4.app.TaskStackBuilder;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
@@ -35,11 +29,10 @@ public class EditAccount extends AppCompatActivity {
 
     private AutoCompleteTextView nomeUtente,cognomeUtente,cfUtente, dataNascitaUtente, comuneNascitaUtente, indirizzoUtente,capUtente,
             numTelUetente,emailUtente,userUtente;
-    private TextInputLayout confermaPsw;
     private Button btConf;
 
     private ArrayList<Utente> lista;
-    private String nome,cognome, cf, numTel, user, psw;
+    private String nome,cognome, cf, numTel, user;
 
     private String userCr, pswCr;
     private Utente utente;
