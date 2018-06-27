@@ -15,10 +15,14 @@
     <string name="crednziali">Credenziali di accesso</string>
     <string name="usernameH">Username*</string>
     <string name="pswH">Password*</string>
+    <string name="vecchiaPswH"> Vecchia password*</string>
+    <string name="nuovaPswH">Nuova password*</string>
     <string name="confPswH">Conferma password*</string>
+    <string name="confNuovaPswH">Conferma nuova password*</string>
 
     <string name="login">Accedi</string>
     <string name="conf">Conferma</string>
+    <string name="confModPsw">Salva modifica</string>
     <string name="registrazione">Registrati</string>
 
     <string name="aiutoSegnalazione">Segnala l\'emergenza!</string>
@@ -42,9 +46,13 @@
     <string name="info">INFORMAZIONE</string>
 
     <string name="erroreCredenziali">   Username o password errata. Riprovare.</string>
+    <string name="recuperoPsw">Password dimenticata?</string>
+    <string name="aiutoModificaPsw">Inserisci la vecchia password e successivamente procedi alla modifica.</string>
+    <string name="aiutoNuovaPsw">Inserisci la nuova password e poi conferma.</string>
 
     <string name="dialog_message">La segnalazione è stata inviata con successo. Nel caso siano richieste ulteriori informazioni verrà contattato telefonicamente.</string>
     <string name="dialog_message_foto">Sei sicuro di voler eliminare la foto?</string>
     <string name="dialog_message_pos">Sei sicuro di voler eliminare la posizione?</string>
     <string name="dialog_message_login">In seguito a questo accesso l\'inserimento delle credenziali non sarà più richiesto per dare una maggiore rapidità di utilizzo dell\'applicazione.</string>
+    <string name="dialog_message_recupero_psw">Riceverà un SMS al numero fornito con una password temporanea con la quale potrà accedere.</string>
 </resources>

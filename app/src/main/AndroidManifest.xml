@@ -25,7 +25,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".Registrazione"
-            android:label="Registrazione">
+            android:label="Registrazione"
+            android:parentActivityName=".Login">
 
         </activity>
         <activity android:name=".Segnalazione"
@@ -33,7 +34,8 @@
 
         </activity>
         <activity android:name=".EditAccount"
-            android:label="Modifica dati account">
+            android:label="Modifica dati account"
+            android:parentActivityName=".Segnalazione">
 
         </activity>
 

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="helpfire.emergency.Registrazione"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:id="@+id/contenitoreDatiPersonali"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/datiPersonali"
+            android:textSize="@dimen/titoli"
+            android:textStyle="bold"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/color_button"
+            android:layout_height="2dip"
+            android:layout_marginBottom="10dp"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/nomeUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/nomeH"
+                android:maxLines="1"
+                android:singleLine="true"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/cognomeUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cognomeH"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/cfUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/cfH"
+                android:maxLines="1"
+                android:maxLength="16"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/dataUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/dataNascitaH"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/comuneUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/comuneNascitaH"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/indirizzoUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/indirizzoH"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/capUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/capH"
+                android:inputType="number"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/telefonoUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/numeroTelH"
+                android:maxLines="1"
+                android:inputType="number"
+                android:maxLength="10"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/emailUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/emailH"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/crednziali"
+            android:textSize="@dimen/titoli"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"/>
+        <View
+            android:layout_width="match_parent"
+            android:background="@color/color_button"
+            android:layout_height="2dip"
+            android:layout_marginBottom="5dp"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <AutoCompleteTextView
+                android:id="@+id/usernameUetente"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/usernameH"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/linkModificaPsw"
+            android:paddingTop="10dp"
+            android:paddingBottom="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Modifica password"
+            android:textColor="@color/colorAccent"
+            android:linksClickable="true"/>
+
+        <Button
+            android:id="@+id/btConeferma"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:textAllCaps="false"
+            android:background="@drawable/button"
+            android:text="@string/conf"/>
+    </LinearLayout>
+
+
+
+</ScrollView>

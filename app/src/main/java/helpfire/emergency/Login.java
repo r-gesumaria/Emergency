@@ -37,6 +37,8 @@ public class Login extends AppCompatActivity {
     private AutoCompleteTextView userLogin, pswLogin;
     private ArrayList<Utente> lista;
 
+    private TextView linkRecuperoPsw;
+
     // CRED: nome del file sul quale verranno salvate le credenziali
     private final static String CREDENZIALI = "credenziali";
     private SharedPreferences.Editor edit;
@@ -44,14 +46,14 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setContentView(R.layout.login);
         SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
         if(!credenziali.getString("username","").equals("") && !credenziali.getString("password","").equals("")){
             startActivity(new Intent(getApplicationContext(),Segnalazione.class));
             finish();
         }
 
-        setContentView(R.layout.login);
+
 
         try {
             Controller.creaFile(getApplicationContext());
@@ -67,6 +69,22 @@ public class Login extends AppCompatActivity {
         btAccedi = (Button) findViewById(R.id.btAccedi);
         userLogin = (AutoCompleteTextView) findViewById(R.id.userLogin);
         pswLogin = (AutoCompleteTextView) findViewById(R.id.pswLogin);
+        linkRecuperoPsw = (TextView) findViewById(R.id.linkRecuperaPsw);
+        linkRecuperoPsw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder recupero = new AlertDialog.Builder(Login.this);
+                recupero.setTitle("Recupero password dimenticata");
+                recupero.setMessage(R.string.dialog_message_recupero_psw);
+                recupero.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                recupero.show();
+            }
+        });
 
         richiediPermessi();
 
@@ -101,7 +119,7 @@ public class Login extends AppCompatActivity {
 
                             Log.d("FILE", "lista in login " + lista);
                             for (int i = 0; i < lista.size(); i++) {
-                                if (lista.get(i).getUsername().equalsIgnoreCase(user) && lista.get(i).getPassword().equalsIgnoreCase(psw)) {
+                                  if (lista.get(i).getUsername().equalsIgnoreCase(user) && lista.get(i).getPassword().equalsIgnoreCase(psw)) {
                                     contr = true;
 
                                     //salvo le credenziali per il successivo accesso all'applicazione
@@ -112,16 +130,16 @@ public class Login extends AppCompatActivity {
                                     edit.commit();
 
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Login.this);
-                                    builder.setTitle(R.string.info);
-                                    builder.setMessage(R.string.dialog_message_login);
-                                    builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            startActivity(new Intent(Login.this, Segnalazione.class));
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    builder.setCancelable(false);
-                                    builder.show();
+                                      builder.setTitle(R.string.info);
+                                      builder.setMessage(R.string.dialog_message_login);
+                                      builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                          public void onClick(DialogInterface dialog, int id) {
+                                              startActivity(new Intent(Login.this, Segnalazione.class));
+                                              dialog.dismiss();
+                                          }
+                                      });
+                                      builder.setCancelable(false);
+                                      builder.show();
                                 }
                             }
 

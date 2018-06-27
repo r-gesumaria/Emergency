@@ -44,24 +44,37 @@
             android:singleLine="true"/>
 
     </android.support.design.widget.TextInputLayout>
-
-    <android.support.design.widget.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="30dp"
         android:layout_weight="1">
-
-        <AutoCompleteTextView
-            android:id="@+id/pswLogin"
+        <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/pswH"
-            android:maxLines="1"
-            android:inputType="textPassword"
-            android:singleLine="true" />
+            android:layout_height="wrap_content">
 
-    </android.support.design.widget.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/pswLogin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/pswH"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:singleLine="true" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/linkRecuperaPsw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:textColor="@color/colorAccent"
+            android:text="@string/recuperoPsw"
+            android:linksClickable="true"/>
+    </LinearLayout>
 
     <Button
         android:id="@+id/btAccedi"
@@ -81,8 +94,11 @@
         android:paddingTop="20dp"
         android:paddingBottom="15dp"
         android:text="@string/registrazione"
+        android:textColor="@color/colorAccent"
         android:linksClickable="true"
         android:layout_weight="0.5"/>
+
+
 
 
 

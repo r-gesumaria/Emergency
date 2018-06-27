@@ -44,7 +44,8 @@ public class  Controller {
         if (lista.exists()) {
             Log.d("FILE","inserimento il file esiste");
             ut = letturaFile();
-            if(!ut.contains(u)) {
+            Log.d("FILE","ut "+ut);
+            if(!ut.contains(u)){
                 Log.d("FILE","inserimento - inserisco");
                 ut.add(u);
                 Utenza utenza = new Utenza(ut);
@@ -83,11 +84,20 @@ public class  Controller {
     }
 
     public static boolean rimuoviUtente(Utente u) throws IOException, ClassNotFoundException {
+        Log.d("FILE","elimino");
         ArrayList<Utente> ut = new ArrayList<>();
         if(lista.exists()) {
             ut = letturaFile();
             if(ut.contains(u)) {
-                ut.remove(u);
+                boolean b = ut.remove(u);
+                Log.d("FILE"," elimino? "+b);
+                Log.d("FILE"," size "+ ut.size());
+                Log.d("FILE"," eliminooo? "+ ut);
+                Utenza utenza = new Utenza(ut);
+                FileOutputStream fos = new FileOutputStream(lista);
+                oos = new ObjectOutputStream(fos);
+                oos.writeObject(utenza);
+                oos.close();
                 return true;
             }
         }

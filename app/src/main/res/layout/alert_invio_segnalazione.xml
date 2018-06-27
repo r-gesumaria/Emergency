@@ -3,12 +3,12 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="30dp">
+    android:paddingTop="10dp">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_check"
+        android:src="@drawable/check"
         android:layout_marginLeft="20dp"
         android:layout_gravity="center_vertical"/>
 
@@ -17,6 +17,7 @@
         android:layout_height="wrap_content"
         android:text="@string/dialog_message"
         android:layout_gravity="center_vertical"
+        android:textColor="@color/text_color_primary"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="10dp"/>
 

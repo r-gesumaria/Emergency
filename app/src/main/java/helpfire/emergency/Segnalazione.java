@@ -21,11 +21,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,15 +41,12 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.vision.Frame;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -76,7 +71,6 @@ public class Segnalazione extends AppCompatActivity {
 
     private LocationManager locationManager;
     private RadioButton rdIncendio, rdNeve, rdAltro, rdGas, rdFrana;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +201,7 @@ public class Segnalazione extends AppCompatActivity {
                     LayoutInflater inflater = Segnalazione.this.getLayoutInflater();
                     View dialogView = inflater.inflate(R.layout.alert_invio_segnalazione,null);
                     builder.setView(dialogView);
+                    builder.setTitle("Segnalazione inviata");
                     builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.dismiss();
@@ -302,6 +297,7 @@ public class Segnalazione extends AppCompatActivity {
         builder.setPositiveButton(R.string.elimina, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 editText.setText("");
+                posizione = "";
                 dialog.dismiss();
             }
         });

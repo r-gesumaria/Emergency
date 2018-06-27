@@ -7,8 +7,7 @@
         android:orderInCategory="100"
         android:title="Modifica dati account"
         app:showAsAction="never" />
-
-    <item
+      <item
         android:id="@+id/action_help"
         android:orderInCategory="100"
         android:title="Guida"

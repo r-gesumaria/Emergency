@@ -1,20 +1,28 @@
 package helpfire.emergency;
 
+import android.*;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.NavUtils;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -26,7 +34,7 @@ import java.util.ArrayList;
 public class EditAccount extends AppCompatActivity {
 
     private AutoCompleteTextView nomeUtente,cognomeUtente,cfUtente, dataNascitaUtente, comuneNascitaUtente, indirizzoUtente,capUtente,
-            numTelUetente,emailUtente,userUtente, pswUtente, confPswUtente;
+            numTelUetente,emailUtente,userUtente;
     private TextInputLayout confermaPsw;
     private Button btConf;
 
@@ -36,6 +44,10 @@ public class EditAccount extends AppCompatActivity {
     private String userCr, pswCr;
     private Utente utente;
 
+    private AlertDialog.Builder alert;
+
+    private TextView btModificaPsw;
+
     // CRED: nome del file sul quale verranno salvate le credenziali
     private final static String CREDENZIALI = "credenziali";
     private SharedPreferences.Editor edit;
@@ -43,7 +55,7 @@ public class EditAccount extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registrazione);
+        setContentView(R.layout.activity_edit_account);
 
         nomeUtente = (AutoCompleteTextView) findViewById(R.id.nomeUetente);
         cognomeUtente = (AutoCompleteTextView) findViewById(R.id.cognomeUetente);
@@ -56,10 +68,14 @@ public class EditAccount extends AppCompatActivity {
         emailUtente = (AutoCompleteTextView) findViewById(R.id.emailUetente);
         userUtente = (AutoCompleteTextView) findViewById(R.id.usernameUetente);
         userUtente.setEnabled(false);
-        pswUtente = (AutoCompleteTextView) findViewById(R.id.pswUetente);
-        confPswUtente = (AutoCompleteTextView) findViewById(R.id.confPswUetente);
-        confermaPsw = (TextInputLayout) findViewById(R.id.confermaPsw);
-        confermaPsw.setVisibility(View.INVISIBLE);
+        btModificaPsw = (TextView) findViewById(R.id.linkModificaPsw);
+        btModificaPsw.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                creaAlert();
+            }
+        });
+
         btConf = (Button) findViewById(R.id.btConeferma);
         btConf.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,8 +87,8 @@ public class EditAccount extends AppCompatActivity {
         //acquisisco le credenziali dell'utente
         SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
         if(!credenziali.getString("username","").equals("") && !credenziali.getString("password","").equals("")){
-           userCr = credenziali.getString("username","");
-           pswCr = credenziali.getString("password","");
+            userCr = credenziali.getString("username","");
+            pswCr = credenziali.getString("password","");
         }else{
             Log.d("EDIT","Mancano le credenziali");
         }
@@ -80,7 +96,11 @@ public class EditAccount extends AppCompatActivity {
         //acquisisco i dati dell'utente
         try {
             lista = Controller.letturaFile();
+            Log.d("FILE","lista "+lista);
             for(int i = 0; i<lista.size();i++) {
+                Log.d("FILE","user cr"+ userCr);
+                Log.d("FILE","psw cr "+pswCr);
+
                 if (lista.get(i).getUsername().equalsIgnoreCase(userCr) && lista.get(i).getPassword().equalsIgnoreCase(pswCr)) {
                     utente = lista.get(i);
                 }
@@ -101,26 +121,6 @@ public class EditAccount extends AppCompatActivity {
         capUtente.setText(utente.getCap());
         emailUtente.setText(utente.getEmail());
         userUtente.setText(userCr);
-        pswUtente.setText(pswCr);
-        confPswUtente.setText(pswCr);
-
-        pswUtente.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                confPswUtente.setText("");
-                confermaPsw.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
-        });
     }
 
     private void controlloCampi(){
@@ -129,8 +129,8 @@ public class EditAccount extends AppCompatActivity {
         cf = cfUtente.getText().toString().trim();
         numTel = numTelUetente.getText().toString().trim();
         user= userUtente.getText().toString().trim();
-        psw = pswUtente.getText().toString().trim();
-        if(!nome.equals("") && !cognome.equals("") && !cf.equals("") && !numTel.equals("") && !user.equals("") && !psw.equals("") && !confPswUtente.getText().toString().trim().equals("")){
+
+        if(!nome.equals("") && !cognome.equals("") && !cf.equals("") && !numTel.equals("") && !user.equals("")){
 
             if(cf.length()<16){
                 Toast.makeText(EditAccount.this, "Il codice fiscale deve essere di 16 caratteri.", Toast.LENGTH_LONG).show();
@@ -174,14 +174,16 @@ public class EditAccount extends AppCompatActivity {
 
                     }
                 });
-            }else if(psw.equals(confPswUtente.getText().toString().trim())){
-               //confronto il nuovo utente con il nuovo, se sono diversi elimino il precedente ed inserisco il nuovo
+            }else {
+                //confronto il nuovo utente con il nuovo, se sono diversi elimino il precedente ed inserisco il nuovo
                 try {
+
                     Utente ut = new Utente(nomeUtente.getText().toString().trim(), cognomeUtente.getText().toString().trim(), cfUtente.getText().toString().trim(),
                             dataNascitaUtente.getText().toString().trim(), comuneNascitaUtente.getText().toString().trim(), indirizzoUtente.getText().toString().trim(),
                             capUtente.getText().toString().trim(), numTelUetente.getText().toString().trim(), emailUtente.getText().toString().trim(),
-                            user, psw);
+                            userCr, pswCr);
                     if (!utente.equals(ut)) {
+
                         //rimuovo il vecchio utenete e aggiungo il nuovo
                         Controller.rimuoviUtente(utente);
                         Controller.inserisciUtente(ut);
@@ -190,8 +192,9 @@ public class EditAccount extends AppCompatActivity {
                         SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
                         edit = credenziali.edit();
                         edit.putString("username", user);
-                        edit.putString("password",psw);
+                        edit.putString("password",pswCr);
                         edit.commit();
+
                     }
                     Toast.makeText(EditAccount.this, "Modifica avventuta con successo.", Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(getApplicationContext(),Segnalazione.class));
@@ -199,36 +202,123 @@ public class EditAccount extends AppCompatActivity {
                     userUtente.setError(e.getMessage());
                     Toast.makeText(EditAccount.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-            }else{
-                confPswUtente.setError("Le password non coincidono!");
-                Toast.makeText(EditAccount.this, "Le password non coincidono!", Toast.LENGTH_LONG).show();
-                confPswUtente.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-                    }
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        confPswUtente.setTextColor(Color.BLACK);
-                        confPswUtente.setError(null);
-                    }
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-
-                    }
-                });
             }
         }else{
             Toast.makeText(EditAccount.this, "Compila tutti i campi obigatori!", Toast.LENGTH_LONG).show();
         }
     }
 
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.salva_registrazione, menu);
-        return true;
+    private void creaAlert(){
+        alert = new AlertDialog.Builder(EditAccount.this);
+        LayoutInflater inflater = EditAccount.this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.alert_modifica_password,null);
+
+        final AutoCompleteTextView vecchiaPsw = dialogView.findViewById(R.id.vecchiaPsw);
+        final AutoCompleteTextView nuovaPsw = dialogView.findViewById(R.id.nuovaPsw);
+        final AutoCompleteTextView confNuovaPsw = dialogView.findViewById(R.id.confPsw);
+        Button btAnnulla = dialogView.findViewById(R.id.btAnnullaModifica);
+        Button btSalva = dialogView.findViewById(R.id.btConfermaPsw);
+
+        alert.setView(dialogView);
+        alert.setTitle("Modifica password");
+        alert.setMessage(R.string.aiutoModificaPsw);
+        alert.setCancelable(false);
+        final AlertDialog alertMod = alert.show();
+
+        nuovaPsw.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String pswVecchia = vecchiaPsw.getText().toString().trim();
+                if(!pswVecchia.equals(pswCr)){
+                    vecchiaPsw.setError("La password non è corretta");
+                    vecchiaPsw.setTextColor(Color.RED);
+                    vecchiaPsw.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            nuovaPsw.setText("");
+                            vecchiaPsw.setError(null);
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                            vecchiaPsw.setTextColor(Color.BLACK);
+
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        btAnnulla.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alertMod.dismiss();
+            }
+        });
+
+        btSalva.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String pswNuova = nuovaPsw.getText().toString().trim();
+                String pswConfNuova = confNuovaPsw.getText().toString().trim();
+                if(vecchiaPsw.getText().toString().length() != 0 && nuovaPsw.getText().toString().length() != 0 && confNuovaPsw.getText().toString().length() != 0) {
+                    if (pswNuova.equals(pswConfNuova)) {
+
+                        try {
+                            Utente ut = new Utente(nomeUtente.getText().toString().trim(), cognomeUtente.getText().toString().trim(), cfUtente.getText().toString().trim(),
+                                    dataNascitaUtente.getText().toString().trim(), comuneNascitaUtente.getText().toString().trim(), indirizzoUtente.getText().toString().trim(),
+                                    capUtente.getText().toString().trim(), numTelUetente.getText().toString().trim(), emailUtente.getText().toString().trim(),
+                                    userCr, pswNuova);
+
+                            if (!utente.equals(ut)) {
+
+                                //rimuovo il vecchio utenete e aggiungo il nuovo
+                                Controller.rimuoviUtente(utente);
+                                Controller.inserisciUtente(ut);
+
+                                //salvo le nuove credenzili per un successivo accesso automatico
+                                SharedPreferences credenziali = getSharedPreferences(CREDENZIALI, MODE_PRIVATE);
+                                edit = credenziali.edit();
+
+                                edit.putString("username", userCr);
+                                edit.putString("password", pswNuova);
+                                edit.commit();
+                            }
+                            Toast.makeText(EditAccount.this, "Password modificata con successo.", Toast.LENGTH_LONG).show();
+                            startActivity(new Intent(getApplicationContext(), EditAccount.class));
+                            finish();
+                        } catch (Exception e) {
+                            userUtente.setError(e.getMessage());
+                            Toast.makeText(EditAccount.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        confNuovaPsw.setError("Le password non coincidono.");
+                        confNuovaPsw.setTextColor(Color.RED);
+                    }
+                }else{
+                    Toast.makeText(EditAccount.this, "Compilare tutti i campi.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -236,12 +326,12 @@ public class EditAccount extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_saveFile) {
-            controlloCampi();
+        if (id == android.R.id.home) {
+            startActivity(new Intent(EditAccount.this,Segnalazione.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }*/
+    }
+
 }
